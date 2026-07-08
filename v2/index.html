@@ -103,9 +103,13 @@
   .statusbar svg{width:17px;height:12px;stroke-width:0;fill:currentColor}
   .viewport{position:relative;flex:1 1 auto;overflow:hidden}
   .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:6px 0 22px;
-    opacity:0;visibility:hidden;transform:translateX(14px);
-    transition:opacity .32s ease,transform .32s ease,visibility .32s;-webkit-overflow-scrolling:touch}
-  .screen.is-active{opacity:1;visibility:visible;transform:none}
+    visibility:hidden;opacity:1;transform:translateX(100%);
+    transition:transform .44s cubic-bezier(.32,.72,0,1),opacity .3s ease;-webkit-overflow-scrolling:touch;will-change:transform}
+  .screen.is-active{visibility:visible;transform:translateX(0);z-index:2}
+  .screen.z-top{z-index:4}
+  .screen.no-anim{transition:none!important}
+  .screen.dim::after{content:"";position:absolute;inset:0;background:#0f1512;opacity:.16;pointer-events:none;z-index:6}
+  .screen.dragging{transition:none!important}
   .screen::-webkit-scrollbar{width:0}
   .pad{padding:0 20px}
 
@@ -374,6 +378,28 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   .divider{height:1px;background:var(--line);margin:2px 0}
+  /* --- live interaction states --- */
+  .playbtn.playing,.miniplay.playing{animation:playpulse 1.1s ease-in-out infinite}
+  @keyframes playpulse{0%,100%{box-shadow:0 0 0 0 rgba(47,93,78,0)}50%{box-shadow:0 0 0 7px rgba(47,93,78,.16)}}
+  .wave.playing span{animation:waveq 1s ease-in-out infinite}
+  .wave.playing span:nth-child(2n){animation-delay:.15s}.wave.playing span:nth-child(3n){animation-delay:.3s}
+  @keyframes waveq{0%,100%{opacity:.32}50%{opacity:1}}
+  .tline{cursor:pointer;border-radius:8px;transition:background .15s}
+  .tline:hover{background:var(--card-2)}
+  .tline.speaking{background:var(--green-weak)}
+  .bubble.them{cursor:pointer}
+  .bubble.speaking{box-shadow:0 0 0 2px var(--green)}
+  .chip{cursor:pointer;user-select:none}
+  .filter-hide{display:none!important}
+  .typing{align-self:flex-start;display:inline-flex;gap:5px;align-items:center;background:var(--card);border:1px solid var(--line);
+    border-radius:19px;border-bottom-left-radius:6px;padding:13px 15px}
+  .typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);display:block;animation:typedot 1.3s infinite ease-in-out}
+  .typing i:nth-child(2){animation-delay:.16s}.typing i:nth-child(3){animation-delay:.32s}
+  @keyframes typedot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+  input.field{border:0;outline:0;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:11px 15px}
+  input.field::placeholder{color:var(--muted)}
+  .deck-done{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:30px 16px;min-height:230px}
+  .speaker-dot{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--green-weak);color:var(--green);font-size:11px;vertical-align:-.28em;margin-left:5px}
   :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:8px}
   .hero-card :focus-visible,.fb-summary :focus-visible,.side a:focus-visible,.tab:focus-visible,.btn.primary:focus-visible{outline-color:#E9E0C7}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -467,7 +493,7 @@
 
         <!-- 2 · GOAL SETUP -->
         <section class="screen" id="s-goal" data-tab="" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-welcome"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 1 of 2</span><button class="nb-link" data-nav="s-placement">Skip</button></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-welcome" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 1 of 2</span><button class="nb-link" data-nav="s-placement">Skip</button></div>
           <div class="pad stack">
             <div><p class="eyebrow">Your goal</p><h1 class="largetitle">What do you want French to do for you?</h1></div>
             <div class="stack-sm">
@@ -492,7 +518,7 @@
 
         <!-- 3 · PLACEMENT SNAPSHOT -->
         <section class="screen" id="s-placement" data-tab="" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-goal"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 2 of 2</span><span style="width:34px"></span></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-goal" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 2 of 2</span><span style="width:34px"></span></div>
           <div class="pad stack">
             <div><p class="eyebrow">Your starting point</p><h1 class="largetitle">Here's where you're starting from.</h1><p class="lede">From your quick placement chat. We'll re-check this every couple of weeks.</p></div>
             <div class="card pop" style="display:flex;align-items:center;gap:18px">
@@ -549,7 +575,7 @@
         </section>
 
         <!-- 5 · MISSION OVERVIEW --><section class="screen" id="s-mission" data-tab="today" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-today"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Mission</span><span style="width:34px"></span></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-today" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Mission</span><span style="width:34px"></span></div>
           <div class="pad stack">
             <div class="hero-card">
               <div class="thread"></div><div class="thread two"></div>
@@ -571,12 +597,12 @@
           <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-listen-step">Start mission <svg class="ic"><use href="#i-arrow"/></svg></button></div>
         </section>
         <!-- 6 · LISTEN STEP --><section class="screen" id="s-listen-step" data-tab="today" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-mission"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 1 · Listen</span><span style="width:34px"></span></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-mission" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 1 · Listen</span><span style="width:34px"></span></div>
           <div class="pad stack">
             <div><p class="eyebrow">Listen first</p><h1 class="largetitle">The gardien calls back</h1><p class="lede">He left a voicemail. Play it twice before reading — try to catch the gist.</p></div>
             <div class="player">
               <div class="flow" style="gap:14px">
-                <button class="playbtn" onclick="this.querySelector('use').setAttribute('href', this.dataset.on?'#i-play':'#i-pause'); this.dataset.on=this.dataset.on?'':'1';"><svg class="ic"><use href="#i-play"/></svg></button>
+                <button class="playbtn" data-say="Bonjour Madame, c'est le gardien de l'immeuble. J'ai bien eu votre message au sujet du chauffage. Je peux envoyer un technicien demain matin, entre huit heures et dix heures. Est-ce que ça vous convient ? Rappelez-moi pour confirmer." aria-label="Play voicemail"><svg class="ic"><use href="#i-play"/></svg></button>
                 <div class="grow">
                   <div class="wave" aria-hidden="true"><span style="height:30%"></span><span style="height:70%"></span><span style="height:45%"></span><span style="height:90%"></span><span style="height:60%"></span><span style="height:100%"></span><span style="height:40%"></span><span style="height:75%"></span><span style="height:55%"></span><span style="height:85%"></span><span style="height:35%"></span><span style="height:65%"></span><span style="height:50%"></span><span style="height:80%"></span><span style="height:42%"></span><span style="height:70%"></span></div>
                 </div>
@@ -604,7 +630,7 @@
           <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-phrases">Learn the phrases <svg class="ic"><use href="#i-arrow"/></svg></button></div>
         </section>
         <!-- 7 · PHRASE COACH --><section class="screen" id="s-phrases" data-tab="today" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-listen-step"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 2 · Phrases</span><span style="width:34px"></span></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-listen-step" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 2 · Phrases</span><span style="width:34px"></span></div>
           <div class="pad stack">
             <div><p class="eyebrow">Your toolkit</p><h1 class="largetitle">Four phrases to build your call</h1><p class="lede">Tap to hear each one. You'll reuse the last three in dozens of situations.</p></div>
 
@@ -633,7 +659,7 @@
           <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-record">I'm ready to speak <svg class="ic"><use href="#i-arrow"/></svg></button></div>
         </section>
         <!-- 8 · SPEAK RECORDING --><section class="screen" id="s-record" data-tab="today" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-phrases"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 3 · Speak</span><button class="nb-link" data-nav="s-feedback">Skip</button></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-phrases" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 3 · Speak</span><button class="nb-link" data-nav="s-feedback">Skip</button></div>
           <div class="pad stack">
             <div><p class="eyebrow">Your turn</p><h1 class="largetitle">Leave the gardien a message</h1></div>
             <div class="card tonal">
@@ -657,7 +683,7 @@
           <div class="pad" style="margin-top:16px"><button class="btn primary" id="rec-submit" data-nav="s-feedback" style="opacity:.5;pointer-events:none">Get feedback</button></div>
         </section>
         <!-- 9 · FEEDBACK --><section class="screen" id="s-feedback" data-tab="today" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-record"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Coach feedback</span><span style="width:34px"></span></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-record" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Coach feedback</span><span style="width:34px"></span></div>
           <div class="pad stack">
             <div class="fb-summary">
               <div class="thread"></div>
@@ -714,7 +740,7 @@
             </div>
             <div class="stack-sm" style="padding-bottom:12px">
               <button class="btn primary" data-nav="s-progress">See my progress</button>
-              <button class="btn ghost" data-nav="s-today">Back to today</button>
+              <button class="btn ghost" data-nav="s-today" data-back>Back to today</button>
             </div>
           </div>
         </section>
@@ -750,31 +776,39 @@
           </div>
         </section>
         <!-- 12 · REVIEW CARD --><section class="screen" id="s-reviewcard" data-tab="review" data-full="1">
-          <div class="navbar"><button class="iconbtn" data-nav="s-review"><svg class="ic"><use href="#i-back"/></svg></button><div class="grow" style="padding:0 6px"><div class="track" style="height:6px"><i style="width:33%"></i></div></div><span class="cap tnum">4 / 12</span></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-review" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><div class="grow" style="padding:0 6px"><div class="track" style="height:6px"><i id="rc-progress" style="width:0%"></i></div></div><span class="cap tnum" id="rc-count">1 / 5</span></div>
           <div class="pad" style="min-height:calc(100% - 44px);display:flex;flex-direction:column">
-            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:10px 0">
-              <div class="flow" style="justify-content:center;gap:7px"><span class="tag amber">Grammar</span><span class="tag">from Heating mission</span></div>
-              <div class="card pop" style="padding:26px 20px;text-align:center;min-height:210px;display:flex;flex-direction:column;justify-content:center;gap:14px">
-                <p class="cap" style="letter-spacing:.1em;text-transform:uppercase">Say it in French</p>
-                <p style="font-size:19px;font-weight:600;line-height:1.4;color:var(--ink)">"The heating hasn't been working since yesterday."</p>
-                <div id="rc-answer" hidden>
-                  <div class="divider" style="margin:6px 0 14px"></div>
-                  <p class="serif" style="font-size:22px;font-weight:600;line-height:1.35;color:var(--green)">Le chauffage ne fonctionne plus depuis hier.</p>
-                  <p class="cap" style="margin-top:8px">Watch the « ne… plus » — not « marche pas ».</p>
+            <div id="rc-body" style="flex:1;display:flex;flex-direction:column">
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:10px 0">
+                <div class="flow" style="justify-content:center;gap:7px"><span class="tag amber" id="rc-tag">Grammar</span><span class="tag" id="rc-source">from Heating mission</span></div>
+                <div class="card pop" style="padding:26px 20px;text-align:center;min-height:210px;display:flex;flex-direction:column;justify-content:center;gap:14px">
+                  <p class="cap" style="letter-spacing:.1em;text-transform:uppercase">Say it in French</p>
+                  <p id="rc-front" style="font-size:19px;font-weight:600;line-height:1.4;color:var(--ink)">…</p>
+                  <div id="rc-answer" hidden>
+                    <div class="divider" style="margin:6px 0 14px"></div>
+                    <p class="serif" id="rc-back" style="font-size:22px;font-weight:600;line-height:1.35;color:var(--green)">…</p>
+                    <p class="cap" id="rc-note" style="margin-top:8px">…</p>
+                  </div>
+                </div>
+              </div>
+              <div style="padding-bottom:14px">
+                <button class="btn primary" id="rc-reveal" onclick="revealCard()">Show answer</button>
+                <div id="rc-rate" hidden>
+                  <p class="cap" style="text-align:center;margin:0 0 10px">How well did you know it?</p>
+                  <div class="btnrow">
+                    <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" onclick="rateCard()"><b style="color:var(--berry)">Again</b><small class="cap">&lt;1m</small></button>
+                    <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" onclick="rateCard()"><b style="color:var(--amber)">Hard</b><small class="cap">2 days</small></button>
+                    <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" onclick="rateCard()"><b style="color:var(--green)">Good</b><small class="cap">5 days</small></button>
+                    <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" onclick="rateCard()"><b style="color:var(--green)">Easy</b><small class="cap">12 days</small></button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div style="padding-bottom:14px">
-              <button class="btn primary" id="rc-reveal" onclick="document.getElementById('rc-answer').hidden=false;this.hidden=true;document.getElementById('rc-rate').hidden=false;">Show answer</button>
-              <div id="rc-rate" hidden>
-                <p class="cap" style="text-align:center;margin:0 0 10px">How did that feel?</p>
-                <div class="btnrow">
-                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--berry)">Again</b><small class="cap">&lt;1m</small></button>
-                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--amber)">Hard</b><small class="cap">2 days</small></button>
-                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--green)">Good</b><small class="cap">5 days</small></button>
-                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--green)">Easy</b><small class="cap">12 days</small></button>
-                </div>
-              </div>
+            <div id="rc-done" class="deck-done" hidden>
+              <div style="width:70px;height:70px;border-radius:50%;background:var(--green);color:#F1ECDD;display:grid;place-items:center;box-shadow:0 14px 30px -12px rgba(47,93,78,.7)"><svg class="ic" style="font-size:34px;stroke-width:2"><use href="#i-check"/></svg></div>
+              <div><p class="eyebrow">Session complete</p><h2 class="serif" style="font-size:23px;font-weight:600;margin:6px 0 0">5 reviewed · 4 correct</h2></div>
+              <p class="sub" style="max-width:26ch">Nice work. We'll resurface the tricky ones tomorrow.</p>
+              <button class="btn primary" data-nav="s-review" data-back style="max-width:220px">Done</button>
             </div>
           </div>
         </section>
@@ -804,7 +838,7 @@
         <!-- 14 · ROLEPLAY CHAT --><section class="screen" id="s-chat" data-tab="speak" data-full="1" style="padding:0">
           <div class="chatwrap">
             <div class="navbar" style="padding:6px 14px;border-bottom:1px solid var(--line-2)">
-              <button class="iconbtn" data-nav="s-roleplays"><svg class="ic"><use href="#i-back"/></svg></button>
+              <button class="iconbtn" data-nav="s-roleplays" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button>
               <div class="flow" style="gap:9px;margin:0 auto"><div style="width:30px;height:30px;border-radius:50%;background:var(--green-weak);color:var(--green);display:grid;place-items:center;font-size:14px"><svg class="ic"><use href="#i-users"/></svg></div><div><div style="font-size:14px;font-weight:600;line-height:1.1">Le gardien</div><div class="cap">Heating · roleplay</div></div></div>
               <button class="iconbtn plain" onclick="toast('Translations on')"><svg class="ic"><use href="#i-globe"/></svg></button>
             </div>
@@ -818,31 +852,31 @@
               <div class="bubble them">Je peux envoyer quelqu'un en fin d'après-midi, vers 17h. Ça vous va ?<span class="en">I can send someone late afternoon, around 5pm. Does that work?</span></div>
               <div class="scenechip">Your turn — accept the time and thank him</div>
             </div>
-            <div class="flow" style="padding:2px 14px 0;gap:7px"><button class="chip" onclick="toast('Hint shown')"><svg class="ic"><use href="#i-bulb"/></svg>Hint</button><button class="chip">« Parfait, merci… »</button></div>
-            <div class="composer">
-              <div class="field">Type or hold to speak…</div>
-              <button class="mic"><svg class="ic"><use href="#i-mic"/></svg></button>
-            </div>
+            <div class="flow" style="padding:2px 14px 0;gap:7px"><button class="chip" data-fill="Je vous remercie, c'est parfait."><svg class="ic"><use href="#i-bulb"/></svg>Hint</button><button class="chip" data-fill="Parfait, merci beaucoup. À tout à l'heure.">« Parfait, merci… »</button></div>
+            <form class="composer" id="chatform" onsubmit="return sendChat(event)">
+              <input class="field grow" id="chatinput" placeholder="Type your reply in French…" autocomplete="off" aria-label="Your reply">
+              <button class="mic" type="submit" aria-label="Send"><svg class="ic"><use href="#i-arrow"/></svg></button>
+            </form>
           </div>
         </section>
         <!-- 15 · LISTEN LIBRARY --><section class="screen" id="s-library" data-tab="listen">
           <div class="pad" style="padding-top:8px"><h1 class="largetitle">Listen</h1><p class="lede">Short, real Paris audio — spoken at natural speed, with transcripts when you want them.</p></div>
-          <div class="pad" style="margin-top:14px"><div class="flow wrap" style="gap:7px"><span class="chip on">All</span><span class="chip">A2</span><span class="chip">B1</span><span class="chip">B2</span><span class="chip">Housing</span><span class="chip">Admin</span></div></div>
+          <div class="pad" style="margin-top:14px"><div class="flow wrap" style="gap:7px" data-filter="level"><span class="chip on" data-val="all">All</span><span class="chip" data-val="a2">A2</span><span class="chip" data-val="b1">B1</span><span class="chip" data-val="b2">B2</span></div></div>
           <div class="pad stack" style="margin-top:16px">
             <div class="card pop tap" data-nav="s-listen-step" style="padding:0;overflow:hidden">
               <div style="padding:15px 16px;background:var(--card-2)">
                 <div class="between"><span class="tag green">Continue</span><span class="cap">0:11 / 0:32</span></div>
-                <div class="flow" style="gap:13px;margin-top:11px"><button class="playbtn" style="width:44px;height:44px;font-size:17px"><svg class="ic"><use href="#i-play"/></svg></button><div class="grow"><div style="font-size:15.5px;font-weight:600">Le gardien rappelle</div><div class="cap">Housing · B1 · from your mission</div><div class="track" style="height:5px;margin-top:8px"><i style="width:34%"></i></div></div></div>
+                <div class="flow" style="gap:13px;margin-top:11px"><button class="playbtn" style="width:44px;height:44px;font-size:17px" data-say="Bonjour Madame, c'est le gardien. J'ai bien eu votre message au sujet du chauffage. Je peux envoyer un technicien demain matin." aria-label="Play"><svg class="ic"><use href="#i-play"/></svg></button><div class="grow"><div style="font-size:15.5px;font-weight:600">Le gardien rappelle</div><div class="cap">Housing · B1 · from your mission</div><div class="track" style="height:5px;margin-top:8px"><i style="width:34%"></i></div></div></div>
               </div>
             </div>
 
             <p class="eyebrow" style="margin:2px 0 -2px">Everyday Paris</p>
             <div class="list">
-              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Au café — commander</span><span class="rsub">2:04 · A2</span></span><span class="tag green">Played</span></button>
-              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">À la pharmacie</span><span class="rsub">2:41 · A2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
-              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Louer un appartement</span><span class="rsub">3:18 · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
-              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Annonces du métro</span><span class="rsub">1:12 · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
-              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Petite conversation — les voisins</span><span class="rsub">2:55 · B2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-level="a2" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Au café — commander</span><span class="rsub">2:04 · A2</span></span><span class="tag green">Played</span></button>
+              <button class="row" data-level="a2" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">À la pharmacie</span><span class="rsub">2:41 · A2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-level="b1" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Louer un appartement</span><span class="rsub">3:18 · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-level="b1" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Annonces du métro</span><span class="rsub">1:12 · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-level="b2" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Petite conversation — les voisins</span><span class="rsub">2:55 · B2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
             </div>
           </div>
         </section>
@@ -900,8 +934,8 @@
           </div>
         </section>
         <!-- 17 · MISSION LIBRARY --><section class="screen" id="s-missions" data-tab="today">
-          <div class="navbar"><button class="iconbtn" data-nav="s-today"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Missions</span><button class="iconbtn"><svg class="ic"><use href="#i-search"/></svg></button></div>
-          <div class="pad"><div class="flow wrap" style="gap:7px"><span class="chip on">All</span><span class="chip">Housing</span><span class="chip">Admin</span><span class="chip">Health</span><span class="chip">Daily life</span><span class="chip">Social</span></div></div>
+          <div class="navbar"><button class="iconbtn" data-nav="s-today" data-back aria-label="Back"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Missions</span><button class="iconbtn"><svg class="ic"><use href="#i-search"/></svg></button></div>
+          <div class="pad"><div class="flow wrap" style="gap:7px" data-filter="mission"><span class="chip on" data-val="all">All</span><span class="chip" data-val="housing">Housing</span><span class="chip" data-val="admin">Admin</span><span class="chip" data-val="health">Health</span><span class="chip" data-val="daily">Daily life</span><span class="chip" data-val="social">Social</span></div></div>
           <div class="pad stack" style="margin-top:16px">
             <div class="card pop tap" data-nav="s-mission" style="padding:0;overflow:hidden">
               <div class="hero-card" style="border-radius:0;padding:16px 16px 14px">
@@ -913,22 +947,22 @@
 
             <p class="eyebrow" style="margin:2px 0 -4px">Housing &amp; admin</p>
             <div class="list">
-              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-bank"/></svg></span><span class="grow"><span class="rtitle">Set up your bank account</span><span class="rsub">Admin · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
-              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Sign a lease &amp; état des lieux</span><span class="rsub">Housing · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
-              <button class="row" style="cursor:default;opacity:.62"><span class="lead sand"><svg class="ic"><use href="#i-lock"/></svg></span><span class="grow"><span class="rtitle">Register with the préfecture</span><span class="rsub">Admin · B2</span></span><span class="tag">Locked</span></button>
+              <button class="row" data-theme="admin" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-bank"/></svg></span><span class="grow"><span class="rtitle">Set up your bank account</span><span class="rsub">Admin · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-theme="housing" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Sign a lease &amp; état des lieux</span><span class="rsub">Housing · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-theme="admin" style="cursor:default;opacity:.62"><span class="lead sand"><svg class="ic"><use href="#i-lock"/></svg></span><span class="grow"><span class="rtitle">Register with the préfecture</span><span class="rsub">Admin · B2</span></span><span class="tag">Locked</span></button>
             </div>
 
             <p class="eyebrow" style="margin:2px 0 -4px">Health &amp; daily life</p>
             <div class="list">
-              <button class="row" data-nav="s-mission"><span class="lead amber"><svg class="ic"><use href="#i-heart"/></svg></span><span class="grow"><span class="rtitle">Buy medicine at the pharmacy</span><span class="rsub">Health · A2</span></span><span class="tag green">Done</span></button>
-              <button class="row" data-nav="s-mission"><span class="lead amber"><svg class="ic"><use href="#i-cal"/></svg></span><span class="grow"><span class="rtitle">Book a doctor's appointment</span><span class="rsub">Health · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
-              <button class="row" data-nav="s-mission"><span class="lead sand"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Return an item to a shop</span><span class="rsub">Daily life · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-theme="health" data-nav="s-mission"><span class="lead amber"><svg class="ic"><use href="#i-heart"/></svg></span><span class="grow"><span class="rtitle">Buy medicine at the pharmacy</span><span class="rsub">Health · A2</span></span><span class="tag green">Done</span></button>
+              <button class="row" data-theme="health" data-nav="s-mission"><span class="lead amber"><svg class="ic"><use href="#i-cal"/></svg></span><span class="grow"><span class="rtitle">Book a doctor's appointment</span><span class="rsub">Health · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-theme="daily" data-nav="s-mission"><span class="lead sand"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Return an item to a shop</span><span class="rsub">Daily life · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
             </div>
 
             <p class="eyebrow" style="margin:2px 0 -4px">Social</p>
             <div class="list">
-              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-users"/></svg></span><span class="grow"><span class="rtitle">Small talk with a neighbour</span><span class="rsub">Social · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
-              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-heart"/></svg></span><span class="grow"><span class="rtitle">Invite someone for a coffee</span><span class="rsub">Social · A2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-theme="social" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-users"/></svg></span><span class="grow"><span class="rtitle">Small talk with a neighbour</span><span class="rsub">Social · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-theme="social" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-heart"/></svg></span><span class="grow"><span class="rtitle">Invite someone for a coffee</span><span class="rsub">Social · A2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
             </div>
           </div>
         </section>
@@ -1203,23 +1237,119 @@
 <div class="toast" id="toast" role="status" aria-live="polite"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span id="toast-msg">Saved to review</span></div>
 
 <script>
+  // ---------- refs ----------
   const phone=document.getElementById('phone');
-  function showMobile(id){
-    const el=document.getElementById(id); if(!el) return;
-    document.querySelectorAll('#viewport .screen').forEach(s=>s.classList.remove('is-active'));
-    el.classList.add('is-active');
-    const vp=document.getElementById('viewport'); vp.scrollTop=0; el.scrollTop=0;
-    phone.setAttribute('data-chrome', el.dataset.full? 'full':'app');
-    const tab=el.dataset.tab||'';
-    document.querySelectorAll('.tab').forEach(t=>{const on=t.dataset.tab===tab;t.classList.toggle('is-active',on);
-      if(on)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
+  const viewport=document.getElementById('viewport');
+  let activeId='s-welcome', navStack=['s-welcome'], busy=false;
+
+  // ---------- French text-to-speech ----------
+  function frVoice(){ try{ const vs=speechSynthesis.getVoices();
+    return vs.find(v=>/^fr(-|_)/i.test(v.lang)) || vs.find(v=>/fran[cç]ais|Thomas|Am[eé]lie|Audrey|Marie/i.test(v.name)) || null;
+  }catch(e){ return null; } }
+  if('speechSynthesis' in window){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=function(){ speechSynthesis.getVoices(); }; }
+  let speakWarned=false;
+  function speak(text,o){ o=o||{};
+    text=(text||'').replace(/\s+/g,' ').trim(); if(!text) return;
+    if(!('speechSynthesis' in window)){ if(!speakWarned){ toast('No French voice on this device'); speakWarned=true; } return; }
+    speechSynthesis.cancel();
+    document.querySelectorAll('.playing,.bubble.speaking,.tline.speaking').forEach(e=>e.classList.remove('playing','speaking'));
+    const u=new SpeechSynthesisUtterance(text); u.lang='fr-FR'; u.rate=0.9; u.pitch=1;
+    const v=frVoice(); if(v) u.voice=v;
+    const iconUse=o.btn&&o.btn.querySelector('use'); const iconHad=iconUse&&iconUse.getAttribute('href');
+    if(o.btn) o.btn.classList.add('playing');
+    if(o.wave) o.wave.classList.add('playing');
+    if(o.el) o.el.classList.add('speaking');
+    if(iconUse&&iconHad==='#i-play') iconUse.setAttribute('href','#i-pause');
+    if(o.scrub){ const est=Math.max(2,Math.min(20,text.length*0.06));
+      o.scrub.style.transition='none'; o.scrub.style.width='2%'; void o.scrub.offsetWidth;
+      o.scrub.style.transition='width '+est+'s linear'; o.scrub.style.width='100%'; }
+    const done=function(){ if(o.btn)o.btn.classList.remove('playing'); if(o.wave)o.wave.classList.remove('playing');
+      if(o.el)o.el.classList.remove('speaking'); if(iconUse&&iconHad)iconUse.setAttribute('href',iconHad);
+      if(o.scrub){ o.scrub.style.transition='width .3s'; o.scrub.style.width='34%'; } };
+    u.onend=done; u.onerror=done;
+    speechSynthesis.speak(u);
   }
+  function handlePlay(btn){
+    let text=btn.getAttribute('data-say');
+    if(!text){ const box=btn.closest('.phrase,.natural,.player,.card,.row')||document; const fr=box.querySelector('.fr'); text=fr?fr.textContent:''; }
+    const o={btn:btn}; const player=btn.closest('.player'); if(player){ o.wave=player.querySelector('.wave'); o.scrub=player.querySelector('.scrub i'); }
+    speak(text,o);
+  }
+  function speakEl(el){ const c=el.cloneNode(true); c.querySelectorAll('.en,.who').forEach(n=>n.remove()); speak(c.textContent,{el:el}); }
+
+  // ---------- iOS-style navigation (push / pop / fade) ----------
+  function applyChrome(el){
+    phone.setAttribute('data-chrome', el.dataset.full?'full':'app');
+    const tab=el.dataset.tab||'';
+    document.querySelectorAll('.tab').forEach(t=>{ const on=t.dataset.tab===tab; t.classList.toggle('is-active',on);
+      if(on)t.setAttribute('aria-current','page'); else t.removeAttribute('aria-current'); });
+  }
+  function onEnter(id){
+    if(id==='s-reviewcard'){ rcIdx=0; const b=document.getElementById('rc-body'),d=document.getElementById('rc-done');
+      if(b)b.hidden=false; if(d)d.hidden=true; renderCard(); }
+  }
+  function transitionTo(id,dir){
+    if(busy||id===activeId) return false;
+    const next=document.getElementById(id); if(!next) return false;
+    const cur=document.getElementById(activeId);
+    busy=true;
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    applyChrome(next); onEnter(id);
+    next.classList.add('no-anim'); next.style.zIndex = dir==='back' ? '2' : '4';
+    if(dir==='none'){ next.style.transform='translateX(0)'; next.style.opacity='0'; }
+    else if(dir==='back'){ next.style.transform='translateX(-30%)'; next.style.opacity='1'; }
+    else { next.style.transform='translateX(100%)'; next.style.opacity='1'; }
+    next.classList.add('is-active');
+    if(cur) cur.style.zIndex = dir==='back' ? '4' : '3';
+    void next.offsetWidth;
+    next.classList.remove('no-anim');
+    next.style.transform='translateX(0)'; next.style.opacity='1';
+    if(cur){
+      if(dir==='none') cur.style.opacity='0';
+      else if(dir==='back') cur.style.transform='translateX(100%)';
+      else { cur.style.transform='translateX(-30%)'; cur.classList.add('dim'); }
+    }
+    next.scrollTop=0;
+    setTimeout(function(){
+      if(cur&&cur!==next){ cur.classList.remove('is-active','dim'); cur.style.transform=''; cur.style.opacity=''; cur.style.zIndex=''; }
+      next.style.transform=''; next.style.opacity=''; next.style.zIndex='';
+      activeId=id; busy=false;
+    },460);
+    return true;
+  }
+  function pushTo(id){ if(transitionTo(id,'forward')) navStack.push(id); }
+  function goBack(target){
+    if(busy) return;
+    let prev;
+    if(target){ const i=navStack.indexOf(target); if(i>=0) navStack=navStack.slice(0,i+1); else navStack=[target]; prev=target; }
+    else { if(navStack.length>1) navStack.pop(); prev=navStack[navStack.length-1]; }
+    if(prev) transitionTo(prev,'back');
+  }
+  function switchTab(root){ if(!root) return; if(transitionTo(root,'none')) navStack=[root]; }
+  function jumpTo(id){ showStage('mobile'); if(transitionTo(id,'none')) navStack=[id]; }
+  function showMobile(id){ jumpTo(id); }
+
+  // ---------- edge-swipe back gesture ----------
+  let sx=0,sy=0,st=0,swipeArmed=false;
+  viewport.addEventListener('pointerdown',function(e){
+    if(busy||navStack.length<2){ swipeArmed=false; return; }
+    const r=viewport.getBoundingClientRect();
+    if((e.clientX-r.left)>36){ swipeArmed=false; return; }
+    sx=e.clientX; sy=e.clientY; st=Date.now(); swipeArmed=true;
+  },{passive:true});
+  viewport.addEventListener('pointerup',function(e){
+    if(!swipeArmed) return; swipeArmed=false;
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if(dx>60 && Math.abs(dx)>Math.abs(dy)*2 && (Date.now()-st)<600) goBack();
+  },{passive:true});
+
+  // ---------- desktop coach dashboard ----------
   function showStage(which){
     document.getElementById('stage-mobile').classList.toggle('on',which==='mobile');
     document.getElementById('stage-desktop').classList.toggle('on',which==='desktop');
     const a=document.getElementById('tg-app'),c=document.getElementById('tg-coach');
-    a.classList.toggle('on',which==='mobile');c.classList.toggle('on',which==='desktop');
-    a.setAttribute('aria-selected',which==='mobile');c.setAttribute('aria-selected',which==='desktop');
+    a.classList.toggle('on',which==='mobile'); c.classList.toggle('on',which==='desktop');
+    a.setAttribute('aria-selected',which==='mobile'); c.setAttribute('aria-selected',which==='desktop');
     window.scrollTo({top:0,behavior:'smooth'});
   }
   function showView(id){
@@ -1228,53 +1358,147 @@
     document.querySelectorAll('.side a').forEach(a=>a.classList.toggle('on',a.dataset.view===id));
     document.querySelector('.main').scrollTop=0;
   }
-  document.addEventListener('click',e=>{
-    const nav=e.target.closest('[data-nav]'); if(nav){showMobile(nav.dataset.nav);}
-    const v=e.target.closest('[data-view]'); if(v){showView(v.dataset.view);}
-  });
-  function pick(el){el.parentNode.querySelectorAll('.card').forEach(c=>{c.style.borderColor='';c.style.background='';c.querySelector('svg')?.remove();});
-    el.style.borderColor='var(--green)';el.style.background='var(--green-weak)';
-    if(!el.querySelector('.ic')){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','ic');s.style.color='var(--green)';s.style.fontSize='22px';s.innerHTML='<use href="#i-check"/>';el.appendChild(s);}}
+
+  // ---------- list filters ----------
+  function chipFilter(chip){
+    const group=chip.closest('[data-filter]'); if(!group) return;
+    group.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===chip));
+    const kind=group.dataset.filter, val=chip.dataset.val, screen=chip.closest('.screen');
+    if(kind==='level'){
+      screen.querySelectorAll('[data-level]').forEach(r=>r.classList.toggle('filter-hide', !(val==='all'||r.dataset.level===val)));
+    } else if(kind==='mission'){
+      screen.querySelectorAll('.list').forEach(list=>{
+        let vis=0;
+        list.querySelectorAll('[data-theme]').forEach(r=>{ const ok=val==='all'||r.dataset.theme===val; r.classList.toggle('filter-hide',!ok); if(ok)vis++; });
+        list.classList.toggle('filter-hide',vis===0);
+        const eb=list.previousElementSibling;
+        if(eb&&eb.classList.contains('eyebrow')) eb.classList.toggle('filter-hide',vis===0);
+      });
+    }
+  }
+
+  // ---------- roleplay chat ----------
+  const gardienQueue=[
+    {fr:"Très bien, c'est noté. Le technicien passera dans la journée.", en:"Very well, noted. The technician will come by during the day."},
+    {fr:"Vous serez chez vous cet après-midi ?", en:"Will you be home this afternoon?"},
+    {fr:"Parfait, je vous confirme ça par message. Bonne journée !", en:"Perfect, I'll confirm by text. Have a good day!"}
+  ];
+  let chatTurn=0;
+  function scrollChat(){ const sc=document.getElementById('chatscroll'); sc.scrollTop=sc.scrollHeight; }
+  function addBubble(cls,fr,en){
+    const sc=document.getElementById('chatscroll');
+    const b=document.createElement('div'); b.className='bubble '+cls; b.textContent=fr;
+    if(en){ const s=document.createElement('span'); s.className='en'; s.textContent=en; b.appendChild(s); }
+    sc.appendChild(b); scrollChat(); return b;
+  }
+  function addCorrection(html){
+    const sc=document.getElementById('chatscroll');
+    const b=document.createElement('div'); b.className='bubble correct'; b.innerHTML=html; sc.appendChild(b); scrollChat();
+  }
+  function showTyping(){
+    const sc=document.getElementById('chatscroll');
+    const t=document.createElement('div'); t.className='typing'; t.id='typing'; t.innerHTML='<i></i><i></i><i></i>'; sc.appendChild(t); scrollChat();
+  }
+  function hideTyping(){ const t=document.getElementById('typing'); if(t)t.remove(); }
+  function sendChat(e){ if(e)e.preventDefault();
+    const inp=document.getElementById('chatinput'); const v=inp.value.trim(); if(!v) return false;
+    addBubble('me',v); inp.value=''; inp.focus();
+    showTyping();
+    setTimeout(function(){ hideTyping();
+      if(chatTurn===0) addCorrection('<b>Tiny fix:</b> lovely. On the phone you could close with « <b>je vous remercie</b> ».');
+      const g=gardienQueue[Math.min(chatTurn,gardienQueue.length-1)];
+      const b=addBubble('them',g.fr,g.en); chatTurn++;
+      speakEl(b);
+    },1150);
+    return false;
+  }
+
+  // ---------- review deck ----------
+  const deck=[
+    {front:"\"The heating hasn't been working since yesterday.\"", back:"Le chauffage ne fonctionne plus depuis hier.", note:"Keep the full « ne… plus » — not « marche pas ».", tag:"Grammar", src:"from Heating mission"},
+    {front:"Politely: \"Could someone come by?\"", back:"Est-ce que quelqu'un pourrait passer ?", note:"Conditional « pourrait » softens the request.", tag:"Phrase", src:"from Heating mission"},
+    {front:"\"I'm calling about the heating.\"", back:"Je vous appelle au sujet du chauffage.", note:"« au sujet de » = regarding.", tag:"Phrase", src:"from Heating mission"},
+    {front:"Soften: \"I want an appointment today.\"", back:"Je voulais savoir s'il serait possible d'avoir un rendez-vous aujourd'hui.", note:"The B1 politeness formula — works everywhere.", tag:"Register", src:"from Heating mission"},
+    {front:"le or la?   ___ chauffage", back:"le chauffage", note:"Masculine — « le chauffage ».", tag:"Vocab", src:"from Heating mission"}
+  ];
+  let rcIdx=0;
+  function $id(x){ return document.getElementById(x); }
+  function renderCard(){
+    const c=deck[rcIdx]; if(!c) return;
+    $id('rc-front').textContent=c.front; $id('rc-back').textContent=c.back; $id('rc-note').textContent=c.note;
+    $id('rc-tag').textContent=c.tag; $id('rc-source').textContent=c.src;
+    $id('rc-answer').hidden=true; $id('rc-reveal').hidden=false; $id('rc-rate').hidden=true;
+    $id('rc-count').textContent=(rcIdx+1)+' / '+deck.length;
+    $id('rc-progress').style.width=Math.round(rcIdx/deck.length*100)+'%';
+  }
+  function revealCard(){ $id('rc-answer').hidden=false; $id('rc-reveal').hidden=true; $id('rc-rate').hidden=false; speak(deck[rcIdx].back,{}); }
+  function rateCard(){ rcIdx++;
+    if(rcIdx>=deck.length){ $id('rc-body').hidden=true; $id('rc-done').hidden=false; $id('rc-progress').style.width='100%'; $id('rc-count').textContent=deck.length+' / '+deck.length; }
+    else renderCard();
+  }
+
+  // ---------- misc helpers ----------
+  function pick(el){
+    const group=el.parentNode;
+    group.querySelectorAll(':scope > .card').forEach(c=>{ c.style.borderColor=''; c.style.background='';
+      Array.prototype.slice.call(c.children).forEach(ch=>{ if(ch.tagName&&ch.tagName.toLowerCase()==='svg') ch.remove(); }); });
+    el.style.borderColor='var(--green)'; el.style.background='var(--green-weak)';
+    const s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('class','ic'); s.style.color='var(--green)'; s.style.fontSize='22px'; s.innerHTML='<use href="#i-check"/>'; el.appendChild(s);
+  }
   let tmr;
-  function toast(msg){const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg||'Saved to review';t.classList.add('show');clearTimeout(tmr);tmr=setTimeout(()=>t.classList.remove('show'),2200);}
-  function toggleIndex(open){document.getElementById('index').classList.toggle('open',open);}
-  function toggleTranscript(btn){const t=document.getElementById('transcript');const show=t.hidden;t.hidden=!show;
-    btn.innerHTML=(show?'<svg class="ic"><use href="#i-globe"/></svg>Hide transcript':'<svg class="ic"><use href="#i-globe"/></svg>Show transcript');btn.classList.toggle('on',show);}
-  function toggleEN(btn){const ens=document.querySelectorAll('#transcript [data-en]');const show=ens[0]?.hidden;
-    ens.forEach(e=>e.hidden=!show);btn.textContent=show?'Hide English':'Show English';}
+  function toast(msg){ const t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=msg||'Saved to review'; t.classList.add('show'); clearTimeout(tmr); tmr=setTimeout(function(){ t.classList.remove('show'); },2200); }
+  function toggleIndex(open){ document.getElementById('index').classList.toggle('open',open); }
+  function toggleTranscript(btn){ const tr=document.getElementById('transcript'); const show=tr.hidden; tr.hidden=!show;
+    btn.innerHTML=(show?'<svg class="ic"><use href="#i-globe"/></svg>Hide transcript':'<svg class="ic"><use href="#i-globe"/></svg>Show transcript'); btn.classList.toggle('on',show); }
+  function toggleEN(btn){ const ens=document.querySelectorAll('#transcript [data-en]'); const show=ens[0]&&ens[0].hidden; ens.forEach(e=>e.hidden=!show); btn.textContent=show?'Hide English':'Show English'; }
   let recInt,recSec=0;
   function toggleRec(btn){
     const t=document.getElementById('rec-time'),hint=document.getElementById('rec-hint'),lw=document.getElementById('livewave'),sub=document.getElementById('rec-submit');
     if(btn.classList.contains('rec')){
-      btn.classList.remove('rec');btn.setAttribute('aria-pressed','false');btn.querySelector('use').setAttribute('href','#i-mic');clearInterval(recInt);
-      lw.hidden=true;hint.textContent='Recorded '+t.textContent+' · tap to re-record';
-      sub.style.opacity='1';sub.style.pointerEvents='auto';
-    }else{
-      btn.classList.add('rec');btn.setAttribute('aria-pressed','true');btn.querySelector('use').setAttribute('href','#i-pause');recSec=0;t.textContent='0:00';
-      lw.hidden=false;hint.textContent='Listening… tap to stop';
-      recInt=setInterval(()=>{recSec++;t.textContent='0:'+String(recSec).padStart(2,'0');if(recSec>=59){toggleRec(btn);}},1000);
+      btn.classList.remove('rec'); btn.setAttribute('aria-pressed','false'); btn.querySelector('use').setAttribute('href','#i-mic'); clearInterval(recInt);
+      lw.hidden=true; hint.textContent='Recorded '+t.textContent+' · tap to re-record'; sub.style.opacity='1'; sub.style.pointerEvents='auto';
+    } else {
+      btn.classList.add('rec'); btn.setAttribute('aria-pressed','true'); btn.querySelector('use').setAttribute('href','#i-pause'); recSec=0; t.textContent='0:00';
+      lw.hidden=false; hint.textContent='Listening… tap to stop';
+      recInt=setInterval(function(){ recSec++; t.textContent='0:'+String(recSec).padStart(2,'0'); if(recSec>=59) toggleRec(btn); },1000);
     }
   }
-  // build index
-  const idxData={onb:[['s-welcome','1','Welcome'],['s-goal','2','Goal setup'],['s-placement','3','Placement snapshot']],
-    app:[['s-today','4','Today home'],['s-mission','5','Mission overview'],['s-listen-step','6','Listen step'],['s-phrases','7','Phrase coach'],['s-record','8','Speak recording'],['s-feedback','9','Speaking feedback'],['s-complete','10','Mission complete'],['s-review','11','Review home'],['s-reviewcard','12','Review card'],['s-roleplays','13','Roleplay list'],['s-chat','14','Roleplay chat'],['s-library','15','Listen library'],['s-progress','16','Progress dashboard'],['s-missions','17','Mission library']],
-    coach:[['v-overview','1','Learner overview'],['v-weekly','2','Weekly progress'],['v-planner','3','Mission planner'],['v-attempt','4','Attempt review'],['v-mistakes','5','Mistake bank'],['v-editor','6','Content editor']]};
-  function idxBtn(id,n,label,coach){const b=document.createElement('button');b.innerHTML='<i>'+n+'</i>'+label;
-    b.onclick=()=>{toggleIndex(false);if(coach){showStage('desktop');showView(id);}else{showStage('mobile');showMobile(id);}};return b;}
-  idxData.onb.forEach(d=>document.getElementById('idx-onb').appendChild(idxBtn(...d)));
-  idxData.app.forEach(d=>document.getElementById('idx-app').appendChild(idxBtn(...d)));
-  idxData.coach.forEach(d=>document.getElementById('idx-coach').appendChild(idxBtn(...d,true)));
 
-  // --- accessibility pass: name icon-only buttons, hide decorative icons, make custom controls keyboard-operable ---
+  // ---------- global click routing ----------
+  document.addEventListener('click',function(e){
+    const fill=e.target.closest('[data-fill]'); if(fill){ const inp=document.getElementById('chatinput'); if(inp){ inp.value=fill.dataset.fill; inp.focus(); } return; }
+    const chip=e.target.closest('.chip'); if(chip && chip.closest('[data-filter]')){ chipFilter(chip); return; }
+    const play=e.target.closest('.playbtn,.miniplay'); if(play){ e.stopPropagation(); handlePlay(play); return; }
+    const tab=e.target.closest('.tab'); if(tab){ switchTab(tab.dataset.nav); return; }
+    const back=e.target.closest('[data-back]'); if(back){ e.preventDefault(); goBack(back.getAttribute('data-nav')); return; }
+    const nav=e.target.closest('[data-nav]'); if(nav){ pushTo(nav.dataset.nav); return; }
+    const view=e.target.closest('[data-view]'); if(view){ showView(view.dataset.view); return; }
+    const tl=e.target.closest('.tline'); if(tl){ speakEl(tl); return; }
+    const bub=e.target.closest('.bubble.them'); if(bub){ speakEl(bub); return; }
+  });
+
+  // ---------- screen index panel ----------
+  const idxData={
+    onb:[['s-welcome','1','Welcome'],['s-goal','2','Goal setup'],['s-placement','3','Placement snapshot']],
+    app:[['s-today','4','Today home'],['s-mission','5','Mission overview'],['s-listen-step','6','Listen step'],['s-phrases','7','Phrase coach'],['s-record','8','Speak recording'],['s-feedback','9','Speaking feedback'],['s-complete','10','Mission complete'],['s-review','11','Review home'],['s-reviewcard','12','Review card'],['s-roleplays','13','Roleplay list'],['s-chat','14','Roleplay chat'],['s-library','15','Listen library'],['s-progress','16','Progress dashboard'],['s-missions','17','Mission library']],
+    coach:[['v-overview','1','Learner overview'],['v-weekly','2','Weekly progress'],['v-planner','3','Mission planner'],['v-attempt','4','Attempt review'],['v-mistakes','5','Mistake bank'],['v-editor','6','Content editor']]
+  };
+  function idxBtn(id,n,label,coach){ const b=document.createElement('button'); b.innerHTML='<i>'+n+'</i>'+label;
+    b.onclick=function(){ toggleIndex(false); if(coach){ showStage('desktop'); showView(id); } else { showStage('mobile'); jumpTo(id); } }; return b; }
+  idxData.onb.forEach(d=>document.getElementById('idx-onb').appendChild(idxBtn(d[0],d[1],d[2])));
+  idxData.app.forEach(d=>document.getElementById('idx-app').appendChild(idxBtn(d[0],d[1],d[2])));
+  idxData.coach.forEach(d=>document.getElementById('idx-coach').appendChild(idxBtn(d[0],d[1],d[2],true)));
+
+  // ---------- accessibility pass ----------
   (function(){
-    const L={'i-back':'Back','i-chev':'Open','i-play':'Play','i-pause':'Pause','i-mic':'Record','i-globe':'Toggle translation','i-search':'Search screens','i-plus':'Add','i-slow':'Play slower','i-check':'Confirm'};
+    const L={'i-back':'Back','i-chev':'Open','i-play':'Play','i-pause':'Pause','i-mic':'Record','i-globe':'Toggle translation','i-search':'Search screens','i-plus':'Add','i-slow':'Play slower','i-check':'Confirm','i-arrow':'Continue'};
     document.querySelectorAll('svg.ic').forEach(s=>s.setAttribute('aria-hidden','true'));
     document.querySelectorAll('button').forEach(b=>{
       if(b.getAttribute('aria-label')||b.textContent.trim()) return;
       const u=b.querySelector('use'),id=u&&u.getAttribute('href').slice(2);
       if(id&&L[id]) b.setAttribute('aria-label',L[id]);
     });
-    document.getElementById('recbtn')?.setAttribute('aria-pressed','false');
+    const rb=document.getElementById('recbtn'); if(rb) rb.setAttribute('aria-pressed','false');
     document.getElementById('tg-app').setAttribute('role','tab');
     document.getElementById('tg-coach').setAttribute('role','tab');
     document.querySelectorAll('[data-nav],[data-view]').forEach(el=>{
@@ -1282,10 +1506,10 @@
       if(!el.hasAttribute('tabindex')) el.tabIndex=0;
       if(!el.hasAttribute('role')) el.setAttribute('role', el.hasAttribute('data-view')?'link':'button');
     });
-    document.addEventListener('keydown',e=>{
+    document.addEventListener('keydown',function(e){
       if(e.key==='Enter'||e.key===' '){
         const t=e.target.closest('[data-nav],[data-view]');
-        if(t&&t.tagName.toLowerCase()!=='button'){e.preventDefault();t.click();}
+        if(t&&t.tagName.toLowerCase()!=='button'){ e.preventDefault(); t.click(); }
       }
     });
   })();
