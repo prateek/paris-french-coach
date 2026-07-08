@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Paris French Coach Prototype</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <main class="prototype" data-mode="learner">
+      <aside class="prototype-panel" aria-label="Prototype navigation">
+        <div class="panel-brand">
+          <span class="brand-mark">PF</span>
+          <div>
+            <strong>Paris French Coach</strong>
+            <span>Clickable prototype</span>
+          </div>
+        </div>
+
+        <div class="mode-switch" aria-label="Prototype mode">
+          <button class="is-active" type="button" data-mode-target="learner">
+            <i data-lucide="smartphone"></i>
+            Learner
+          </button>
+          <button type="button" data-mode-target="coach">
+            <i data-lucide="monitor"></i>
+            Coach
+          </button>
+        </div>
+
+        <nav class="screen-nav learner-nav" aria-label="Learner screens">
+          <button class="is-active" type="button" data-target="welcome">Welcome</button>
+          <button type="button" data-target="goal-setup">Goal setup</button>
+          <button type="button" data-target="placement-snapshot">Placement snapshot</button>
+          <button type="button" data-target="today-home">Today home</button>
+          <button type="button" data-target="mission-overview">Mission overview</button>
+          <button type="button" data-target="listen-step">Listen step</button>
+          <button type="button" data-target="phrase-coach">Phrase coach</button>
+          <button type="button" data-target="speak-recording">Speak recording</button>
+          <button type="button" data-target="speaking-feedback">Speaking feedback</button>
+          <button type="button" data-target="mission-complete">Mission complete</button>
+          <button type="button" data-target="review-home">Review home</button>
+          <button type="button" data-target="review-card">Review card</button>
+          <button type="button" data-target="speak-roleplay-list">Speak roleplay list</button>
+          <button type="button" data-target="roleplay-chat">Roleplay chat</button>
+          <button type="button" data-target="listen-library">Listen library</button>
+          <button type="button" data-target="progress-dashboard">Progress dashboard</button>
+          <button type="button" data-target="mission-library">Mission library</button>
+        </nav>
+
+        <nav class="screen-nav coach-nav" aria-label="Coach screens">
+          <button class="is-active" type="button" data-coach-target="coach-overview">Learner overview</button>
+          <button type="button" data-coach-target="coach-weekly">Weekly progress</button>
+          <button type="button" data-coach-target="coach-planner">Mission planner</button>
+          <button type="button" data-coach-target="coach-attempt">Attempt review</button>
+          <button type="button" data-coach-target="coach-mistakes">Mistake bank</button>
+          <button type="button" data-coach-target="coach-editor">Content editor</button>
+        </nav>
+      </aside>
+
+      <section class="learner-stage" aria-label="Learner mobile prototype">
+        <div class="phone-shell">
+          <div class="phone-status" aria-hidden="true">
+            <span>9:41</span>
+            <span class="status-icons">5G 84%</span>
+          </div>
+
+          <div class="phone-content">
+            <section class="mobile-screen is-active" id="welcome" data-tab="none" aria-labelledby="welcome-title">
+              <div class="welcome-hero">
+                <img src="assets/paris-heating-mission.png" alt="Warm Paris apartment interior near a window">
+                <div class="hero-shade"></div>
+                <div class="hero-copy">
+                  <span class="eyebrow">Paris French Coach</span>
+                  <h1 id="welcome-title">Practical French for your first weeks in Paris.</h1>
+                  <p>Realistic listening, coached speaking, and mistakes worth reviewing.</p>
+                </div>
+              </div>
+              <div class="screen-body tight">
+                <button class="primary-action" type="button" data-target="goal-setup">
+                  <span>Set my goal</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+                <button class="secondary-action" type="button" data-target="today-home">
+                  <span>Preview today's mission</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="goal-setup" data-tab="none" aria-labelledby="goal-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="welcome" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Setup</span>
+              </header>
+              <div class="screen-body">
+                <span class="eyebrow">Goal setup</span>
+                <h1 id="goal-title">B1 practical confidence before move day.</h1>
+                <div class="field-stack">
+                  <label>
+                    <span>Current level</span>
+                    <select>
+                      <option>A2+</option>
+                      <option>A2</option>
+                      <option>B1</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Main priority</span>
+                    <select>
+                      <option>Apartment and daily services</option>
+                      <option>Healthcare and appointments</option>
+                      <option>Work and networking</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Move date</span>
+                    <input type="text" value="12 days away">
+                  </label>
+                </div>
+                <div class="choice-grid">
+                  <button class="choice is-selected" type="button">
+                    <i data-lucide="home"></i>
+                    Housing
+                  </button>
+                  <button class="choice" type="button">
+                    <i data-lucide="train"></i>
+                    Transport
+                  </button>
+                  <button class="choice" type="button">
+                    <i data-lucide="briefcase"></i>
+                    Work
+                  </button>
+                  <button class="choice" type="button">
+                    <i data-lucide="stethoscope"></i>
+                    Health
+                  </button>
+                </div>
+                <button class="primary-action" type="button" data-target="placement-snapshot">
+                  <span>Continue</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="placement-snapshot" data-tab="none" aria-labelledby="placement-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="goal-setup" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Snapshot</span>
+              </header>
+              <div class="screen-body">
+                <span class="eyebrow">Placement snapshot</span>
+                <h1 id="placement-title">A2+ with strong survival French.</h1>
+                <div class="level-meter" aria-label="Current level A2 plus">
+                  <span>A1</span>
+                  <span>A2</span>
+                  <span class="is-current">A2+</span>
+                  <span>B1</span>
+                  <span>B2</span>
+                </div>
+                <div class="insight-list">
+                  <article>
+                    <i data-lucide="check-circle-2"></i>
+                    <div>
+                      <strong>Good foundation</strong>
+                      <p>You can explain routine needs with clear sentence starters.</p>
+                    </div>
+                  </article>
+                  <article>
+                    <i data-lucide="alert-circle"></i>
+                    <div>
+                      <strong>Growth edge</strong>
+                      <p>Longer polite requests and repair follow-ups still sound hesitant.</p>
+                    </div>
+                  </article>
+                  <article>
+                    <i data-lucide="target"></i>
+                    <div>
+                      <strong>Coach focus</strong>
+                      <p>Apartment, phone calls, scheduling, and problem reports.</p>
+                    </div>
+                  </article>
+                </div>
+                <button class="primary-action" type="button" data-target="today-home">
+                  <span>Start today</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="today-home" data-tab="today" aria-labelledby="today-title">
+              <header class="home-header">
+                <div>
+                  <span class="eyebrow">Bonjour, Anika</span>
+                  <h1 id="today-title">Today's Paris mission</h1>
+                </div>
+                <button class="icon-button" type="button" data-target="progress-dashboard" aria-label="Progress">
+                  <i data-lucide="activity"></i>
+                </button>
+              </header>
+              <div class="screen-body with-tabs">
+                <article class="mission-card image-card">
+                  <img src="assets/paris-heating-mission.png" alt="Paris apartment table with a radiator detail">
+                  <div class="image-card-copy">
+                    <span>12 days to Paris</span>
+                    <h2>Report a problem with your apartment heating.</h2>
+                    <p>Call a landlord, explain the issue, and ask for someone to come by.</p>
+                    <button class="primary-action" type="button" data-target="mission-overview">
+                      <span>Start mission</span>
+                      <i data-lucide="play"></i>
+                    </button>
+                  </div>
+                </article>
+
+                <div class="metric-row">
+                  <article class="metric-card">
+                    <span>Readiness</span>
+                    <strong>58%</strong>
+                    <div class="progress-line"><span style="width: 58%"></span></div>
+                  </article>
+                  <article class="metric-card">
+                    <span>Streak</span>
+                    <strong>4 days</strong>
+                    <div class="progress-line sage"><span style="width: 80%"></span></div>
+                  </article>
+                </div>
+
+                <article class="daily-plan">
+                  <div>
+                    <i data-lucide="headphones"></i>
+                    <span>Listen</span>
+                    <strong>2 min</strong>
+                  </div>
+                  <div>
+                    <i data-lucide="message-circle"></i>
+                    <span>Phrase coach</span>
+                    <strong>4 phrases</strong>
+                  </div>
+                  <div>
+                    <i data-lucide="mic"></i>
+                    <span>Speak</span>
+                    <strong>1 attempt</strong>
+                  </div>
+                </article>
+
+                <button class="text-row" type="button" data-target="mission-library">
+                  <span>Browse mission library</span>
+                  <i data-lucide="chevron-right"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="mission-overview" data-tab="today" aria-labelledby="mission-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="today-home" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Mission</span>
+              </header>
+              <div class="screen-body with-tabs">
+                <div class="compact-image">
+                  <img src="assets/paris-heating-mission.png" alt="Apartment radiator and phone near a Paris window">
+                </div>
+                <span class="eyebrow">Apartment life</span>
+                <h1 id="mission-title">Report a problem with your apartment heating.</h1>
+                <p class="lead">You will call the property contact, explain that the heating stopped yesterday, and ask politely whether someone could come by.</p>
+                <div class="outcome-grid">
+                  <article>
+                    <i data-lucide="ear"></i>
+                    <strong>Understand</strong>
+                    <span>Natural phone-speed French</span>
+                  </article>
+                  <article>
+                    <i data-lucide="speech"></i>
+                    <strong>Respond</strong>
+                    <span>Clear polite request</span>
+                  </article>
+                </div>
+                <div class="phrase-strip">
+                  <span>Je vous appelle au sujet de...</span>
+                  <span>Est-ce que quelqu'un pourrait passer ?</span>
+                </div>
+                <button class="primary-action" type="button" data-target="listen-step">
+                  <span>Listen first</span>
+                  <i data-lucide="headphones"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="listen-step" data-tab="listen" aria-labelledby="listen-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="mission-overview" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Listen</span>
+              </header>
+              <div class="screen-body with-tabs">
+                <span class="eyebrow">Step 1 of 4</span>
+                <h1 id="listen-title">A real phone call pace.</h1>
+                <article class="audio-card">
+                  <div class="audio-topline">
+                    <div>
+                      <strong>Agence contact</strong>
+                      <span>0:42</span>
+                    </div>
+                    <button class="icon-button dark" type="button" aria-label="Play audio">
+                      <i data-lucide="play"></i>
+                    </button>
+                  </div>
+                  <div class="waveform" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </article>
+                <button class="toggle-row" type="button" data-toggle="transcript" aria-expanded="false">
+                  <span>Transcript</span>
+                  <i data-lucide="chevron-down"></i>
+                </button>
+                <article class="transcript-panel" id="transcript" hidden>
+                  <p><strong>Contact:</strong> Bonjour, agence Martin, je vous écoute.</p>
+                  <p><strong>Anika:</strong> Bonjour, je vous appelle au sujet du chauffage dans mon appartement.</p>
+                  <p><strong>Contact:</strong> D'accord. Depuis quand est-ce que ça ne fonctionne plus ?</p>
+                  <p><strong>Anika:</strong> Le chauffage ne fonctionne plus depuis hier.</p>
+                  <p><strong>Contact:</strong> Je peux demander à quelqu'un de passer demain matin.</p>
+                </article>
+                <div class="coach-note">
+                  <i data-lucide="lightbulb"></i>
+                  <p>Listen for how the speaker softens the request after stating the problem.</p>
+                </div>
+                <button class="primary-action" type="button" data-target="phrase-coach">
+                  <span>Learn the phrases</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="phrase-coach" data-tab="today" aria-labelledby="phrase-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="listen-step" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Phrase coach</span>
+              </header>
+              <div class="screen-body with-tabs">
+                <span class="eyebrow">Step 2 of 4</span>
+                <h1 id="phrase-title">Sound calm, precise, and polite.</h1>
+                <div class="phrase-list">
+                  <article class="phrase-card">
+                    <span>Open the call</span>
+                    <strong>Je vous appelle au sujet de...</strong>
+                    <p>Use this for a clear, adult phone opener: "I'm calling about..."</p>
+                  </article>
+                  <article class="phrase-card">
+                    <span>State the problem</span>
+                    <strong>Le chauffage ne fonctionne plus depuis hier.</strong>
+                    <p>"Ne fonctionne plus" is more natural than only saying "est cassé."</p>
+                  </article>
+                  <article class="phrase-card">
+                    <span>Ask for action</span>
+                    <strong>Est-ce que quelqu'un pourrait passer ?</strong>
+                    <p>Polite and direct. Good for B1 practical calls.</p>
+                  </article>
+                  <article class="phrase-card">
+                    <span>Soften a request</span>
+                    <strong>Je voulais savoir s'il serait possible de...</strong>
+                    <p>A useful B1/B2 frame when you need flexibility or help.</p>
+                  </article>
+                </div>
+                <button class="primary-action" type="button" data-target="speak-recording">
+                  <span>Try the call</span>
+                  <i data-lucide="mic"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="speak-recording" data-tab="speak" aria-labelledby="speak-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="phrase-coach" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Speak</span>
+              </header>
+              <div class="screen-body with-tabs">
+                <span class="eyebrow">Step 3 of 4</span>
+                <h1 id="speak-title">Call the property contact.</h1>
+                <article class="prompt-card">
+                  <span>Your task</span>
+                  <p>Say who you are calling about, explain the heating stopped yesterday, and ask whether someone could come by.</p>
+                </article>
+                <div class="record-panel">
+                  <button class="record-button" type="button" data-record aria-label="Start recording">
+                    <i data-lucide="mic"></i>
+                  </button>
+                  <strong data-record-label>Ready to record</strong>
+                  <span data-record-time>00:00</span>
+                </div>
+                <label class="response-box">
+                  <span>Write instead</span>
+                  <textarea>Bonjour, je vous appelle au sujet du chauffage. Le chauffage ne fonctionne plus depuis hier. Est-ce que quelqu'un pourrait passer ?</textarea>
+                </label>
+                <button class="primary-action" type="button" data-target="speaking-feedback">
+                  <span>Get feedback</span>
+                  <i data-lucide="sparkles"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="speaking-feedback" data-tab="speak" aria-labelledby="feedback-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="speak-recording" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Feedback</span>
+              </header>
+              <div class="screen-body with-tabs">
+                <span class="eyebrow">Step 4 of 4</span>
+                <h1 id="feedback-title">Clear, polite, and understandable.</h1>
+                <article class="feedback-summary">
+                  <i data-lucide="check-circle-2"></i>
+                  <div>
+                    <strong>Encouraging summary</strong>
+                    <p>You handled the practical goal well. The contact would understand the issue and the action you need.</p>
+                  </div>
+                </article>
+                <article class="feedback-block positive">
+                  <h2>What went well</h2>
+                  <ul>
+                    <li>You opened with "Je vous appelle au sujet de..." naturally.</li>
+                    <li>Your timeline "depuis hier" was precise.</li>
+                    <li>The request stayed polite without becoming too formal.</li>
+                  </ul>
+                </article>
+                <article class="feedback-block corrections">
+                  <h2>Corrections</h2>
+                  <div class="correction">
+                    <span>Instead of</span>
+                    <p>Le chauffage est ne marche pas.</p>
+                    <strong>Say</strong>
+                    <p>Le chauffage ne fonctionne plus.</p>
+                  </div>
+                  <div class="correction">
+                    <span>Instead of</span>
+                    <p>Quelqu'un peut venir ?</p>
+                    <strong>Say</strong>
+                    <p>Est-ce que quelqu'un pourrait passer ?</p>
+                  </div>
+                </article>
+                <article class="natural-version">
+                  <span>More natural B1 version</span>
+                  <p>Bonjour, je vous appelle au sujet du chauffage dans mon appartement. Il ne fonctionne plus depuis hier. Je voulais savoir s'il serait possible que quelqu'un passe aujourd'hui ou demain.</p>
+                </article>
+                <button class="primary-action" type="button" data-save-review>
+                  <span>Save to review</span>
+                  <i data-lucide="bookmark"></i>
+                </button>
+                <button class="secondary-action" type="button" data-target="mission-complete">
+                  <span>Complete mission</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="mission-complete" data-tab="today" aria-labelledby="complete-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="speaking-feedback" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Complete</span>
+              </header>
+              <div class="screen-body with-tabs center-screen">
+                <div class="completion-mark">
+                  <i data-lucide="check"></i>
+                </div>
+                <span class="eyebrow">Mission complete</span>
+                <h1 id="complete-title">Apartment heating call saved.</h1>
+                <p class="lead">Speaking confidence moved up because you completed the full loop: listen, phrase coach, response, feedback, review.</p>
+                <div class="metric-row">
+                  <article class="metric-card">
+                    <span>Speaking</span>
+                    <strong>+4 min</strong>
+                  </article>
+                  <article class="metric-card">
+                    <span>Review</span>
+                    <strong>2 cards</strong>
+                  </article>
+                </div>
+                <button class="primary-action" type="button" data-target="review-card">
+                  <span>Review saved mistake</span>
+                  <i data-lucide="rotate-ccw"></i>
+                </button>
+                <button class="secondary-action" type="button" data-target="mission-library">
+                  <span>Choose another mission</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="review-home" data-tab="review" aria-labelledby="review-title">
+              <header class="home-header">
+                <div>
+                  <span class="eyebrow">Review</span>
+                  <h1 id="review-title">Mistakes worth keeping.</h1>
+                </div>
+                <button class="icon-button" type="button" data-target="review-card" aria-label="Start review">
+                  <i data-lucide="play"></i>
+                </button>
+              </header>
+              <div class="screen-body with-tabs">
+                <div class="metric-row">
+                  <article class="metric-card">
+                    <span>Accuracy</span>
+                    <strong>74%</strong>
+                    <div class="progress-line"><span style="width: 74%"></span></div>
+                  </article>
+                  <article class="metric-card">
+                    <span>Due today</span>
+                    <strong>8</strong>
+                    <div class="progress-line burgundy"><span style="width: 45%"></span></div>
+                  </article>
+                </div>
+                <article class="review-set">
+                  <div>
+                    <span>Apartment calls</span>
+                    <strong>4 cards</strong>
+                  </div>
+                  <button class="icon-button" type="button" data-target="review-card" aria-label="Open apartment calls">
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </article>
+                <article class="review-set">
+                  <div>
+                    <span>Polite requests</span>
+                    <strong>3 cards</strong>
+                  </div>
+                  <button class="icon-button" type="button" data-target="review-card" aria-label="Open polite requests">
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </article>
+                <article class="review-set">
+                  <div>
+                    <span>Phone openings</span>
+                    <strong>1 card</strong>
+                  </div>
+                  <button class="icon-button" type="button" data-target="review-card" aria-label="Open phone openings">
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </article>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="review-card" data-tab="review" aria-labelledby="card-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="review-home" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Review card</span>
+              </header>
+              <div class="screen-body with-tabs">
+                <span class="eyebrow">Polite request</span>
+                <h1 id="card-title">Make this more natural.</h1>
+                <article class="flash-card">
+                  <span>Your saved sentence</span>
+                  <p>Quelqu'un peut venir pour le chauffage ?</p>
+                </article>
+                <button class="primary-action" type="button" data-reveal>
+                  <span>Reveal answer</span>
+                  <i data-lucide="eye"></i>
+                </button>
+                <article class="answer-card" hidden>
+                  <span>Natural version</span>
+                  <p>Est-ce que quelqu'un pourrait passer pour regarder le chauffage ?</p>
+                  <small>Use "pourrait passer" for a softer, more practical request.</small>
+                </article>
+                <div class="review-actions">
+                  <button type="button" data-target="review-home">Again</button>
+                  <button type="button" data-target="review-home">Good</button>
+                  <button type="button" data-target="review-home">Easy</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="speak-roleplay-list" data-tab="speak" aria-labelledby="roleplay-list-title">
+              <header class="home-header">
+                <div>
+                  <span class="eyebrow">Speak</span>
+                  <h1 id="roleplay-list-title">Roleplays for Paris life.</h1>
+                </div>
+                <button class="icon-button" type="button" data-target="speak-recording" aria-label="Quick record">
+                  <i data-lucide="mic"></i>
+                </button>
+              </header>
+              <div class="screen-body with-tabs">
+                <article class="roleplay-card featured">
+                  <div>
+                    <span>Recommended</span>
+                    <h2>Apartment heating problem</h2>
+                    <p>Landlord call, polite request, follow-up time.</p>
+                  </div>
+                  <button class="icon-button dark" type="button" data-target="roleplay-chat" aria-label="Open roleplay">
+                    <i data-lucide="message-circle"></i>
+                  </button>
+                </article>
+                <article class="roleplay-card">
+                  <div>
+                    <span>Mairie</span>
+                    <h2>Ask about a document</h2>
+                    <p>Clarify a missing proof of address.</p>
+                  </div>
+                  <button class="icon-button" type="button" data-target="roleplay-chat" aria-label="Open mairie roleplay">
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </article>
+                <article class="roleplay-card">
+                  <div>
+                    <span>Healthcare</span>
+                    <h2>Move an appointment</h2>
+                    <p>Explain a conflict and offer times.</p>
+                  </div>
+                  <button class="icon-button" type="button" data-target="roleplay-chat" aria-label="Open healthcare roleplay">
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </article>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="roleplay-chat" data-tab="speak" aria-labelledby="roleplay-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="speak-roleplay-list" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Mme Dubois</span>
+              </header>
+              <div class="screen-body with-tabs chat-screen">
+                <h1 id="roleplay-title">Heating follow-up</h1>
+                <div class="chat-thread" aria-live="polite">
+                  <article class="bubble coach">
+                    <span>Mme Dubois</span>
+                    <p>Bonjour, je vous écoute. Quel est le problème dans l'appartement ?</p>
+                  </article>
+                  <article class="bubble learner">
+                    <span>Anika</span>
+                    <p>Bonjour, je vous appelle au sujet du chauffage.</p>
+                  </article>
+                  <article class="bubble coach">
+                    <span>Mme Dubois</span>
+                    <p>Depuis quand est-ce que ça ne fonctionne plus ?</p>
+                  </article>
+                </div>
+                <div class="suggestion-row">
+                  <button type="button" data-chat-reply="Le chauffage ne fonctionne plus depuis hier.">depuis hier</button>
+                  <button type="button" data-chat-reply="Je voulais savoir s'il serait possible que quelqu'un passe.">demander une visite</button>
+                </div>
+                <button class="primary-action" type="button" data-target="speaking-feedback">
+                  <span>Finish attempt</span>
+                  <i data-lucide="check"></i>
+                </button>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="listen-library" data-tab="listen" aria-labelledby="library-title">
+              <header class="home-header">
+                <div>
+                  <span class="eyebrow">Listen</span>
+                  <h1 id="library-title">Realistic French library.</h1>
+                </div>
+                <button class="icon-button" type="button" data-target="listen-step" aria-label="Open current audio">
+                  <i data-lucide="headphones"></i>
+                </button>
+              </header>
+              <div class="screen-body with-tabs">
+                <div class="segmented">
+                  <button class="is-active" type="button">Daily life</button>
+                  <button type="button">Calls</button>
+                  <button type="button">Admin</button>
+                </div>
+                <article class="listen-item">
+                  <i data-lucide="home"></i>
+                  <div>
+                    <span>A2+/B1</span>
+                    <strong>Heating repair call</strong>
+                    <p>42 sec, transcript available</p>
+                  </div>
+                  <button class="icon-button" type="button" data-target="listen-step" aria-label="Open heating repair call">
+                    <i data-lucide="play"></i>
+                  </button>
+                </article>
+                <article class="listen-item">
+                  <i data-lucide="shopping-basket"></i>
+                  <div>
+                    <span>B1</span>
+                    <strong>At the market</strong>
+                    <p>1 min 10 sec, fast reductions</p>
+                  </div>
+                  <button class="icon-button" type="button" aria-label="Play market audio">
+                    <i data-lucide="play"></i>
+                  </button>
+                </article>
+                <article class="listen-item">
+                  <i data-lucide="building-2"></i>
+                  <div>
+                    <span>B1/B2</span>
+                    <strong>Proof of address</strong>
+                    <p>Admin desk exchange</p>
+                  </div>
+                  <button class="icon-button" type="button" aria-label="Play proof of address audio">
+                    <i data-lucide="play"></i>
+                  </button>
+                </article>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="progress-dashboard" data-tab="progress" aria-labelledby="progress-title">
+              <header class="home-header">
+                <div>
+                  <span class="eyebrow">Progress</span>
+                  <h1 id="progress-title">Paris readiness: 58%.</h1>
+                </div>
+                <button class="icon-button" type="button" data-target="today-home" aria-label="Today">
+                  <i data-lucide="calendar-days"></i>
+                </button>
+              </header>
+              <div class="screen-body with-tabs">
+                <article class="readiness-card">
+                  <div class="readiness-ring" style="--value: 58">
+                    <span>58%</span>
+                  </div>
+                  <div>
+                    <strong>B1 practical confidence</strong>
+                    <p>12 days away from move day. Keep pressure on calls and polite repairs.</p>
+                  </div>
+                </article>
+                <div class="metric-row">
+                  <article class="metric-card">
+                    <span>Weekly missions</span>
+                    <strong>4/5</strong>
+                  </article>
+                  <article class="metric-card">
+                    <span>Speaking time</span>
+                    <strong>32 min</strong>
+                  </article>
+                </div>
+                <article class="skill-bars">
+                  <div>
+                    <span>Listening in calls</span>
+                    <strong>62%</strong>
+                    <div class="progress-line"><span style="width: 62%"></span></div>
+                  </div>
+                  <div>
+                    <span>Polite requests</span>
+                    <strong>68%</strong>
+                    <div class="progress-line sage"><span style="width: 68%"></span></div>
+                  </div>
+                  <div>
+                    <span>Repair vocabulary</span>
+                    <strong>51%</strong>
+                    <div class="progress-line burgundy"><span style="width: 51%"></span></div>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section class="mobile-screen" id="mission-library" data-tab="today" aria-labelledby="mission-library-title">
+              <header class="screen-header">
+                <button class="icon-button" type="button" data-target="today-home" aria-label="Back">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <span>Missions</span>
+              </header>
+              <div class="screen-body with-tabs">
+                <span class="eyebrow">Mission library</span>
+                <h1 id="mission-library-title">Choose the next practical situation.</h1>
+                <div class="mission-list">
+                  <article class="mission-row selected">
+                    <div>
+                      <span>Apartment</span>
+                      <strong>Report a problem with your apartment heating</strong>
+                      <p>Listen, phrases, speaking feedback</p>
+                    </div>
+                    <button class="icon-button dark" type="button" data-target="mission-overview" aria-label="Open heating mission">
+                      <i data-lucide="arrow-right"></i>
+                    </button>
+                  </article>
+                  <article class="mission-row">
+                    <div>
+                      <span>Transport</span>
+                      <strong>Ask about a Navigo issue</strong>
+                      <p>Station counter, clarification, next step</p>
+                    </div>
+                    <button class="icon-button" type="button" aria-label="Open transport mission">
+                      <i data-lucide="lock"></i>
+                    </button>
+                  </article>
+                  <article class="mission-row">
+                    <div>
+                      <span>Healthcare</span>
+                      <strong>Describe symptoms at a pharmacy</strong>
+                      <p>Practical vocabulary and advice checks</p>
+                    </div>
+                    <button class="icon-button" type="button" aria-label="Open healthcare mission">
+                      <i data-lucide="lock"></i>
+                    </button>
+                  </article>
+                  <article class="mission-row">
+                    <div>
+                      <span>Work</span>
+                      <strong>Introduce yourself at a coworking event</strong>
+                      <p>Concise background and follow-up question</p>
+                    </div>
+                    <button class="icon-button" type="button" aria-label="Open work mission">
+                      <i data-lucide="lock"></i>
+                    </button>
+                  </article>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <nav class="tab-bar" aria-label="Main tabs">
+            <button class="is-active" type="button" data-tab-target="today">
+              <i data-lucide="sun"></i>
+              <span>Today</span>
+            </button>
+            <button type="button" data-tab-target="speak">
+              <i data-lucide="mic"></i>
+              <span>Speak</span>
+            </button>
+            <button type="button" data-tab-target="listen">
+              <i data-lucide="headphones"></i>
+              <span>Listen</span>
+            </button>
+            <button type="button" data-tab-target="review">
+              <i data-lucide="rotate-ccw"></i>
+              <span>Review</span>
+            </button>
+            <button type="button" data-tab-target="progress">
+              <i data-lucide="line-chart"></i>
+              <span>Progress</span>
+            </button>
+          </nav>
+        </div>
+      </section>
+
+      <section class="coach-stage" aria-label="Coach desktop dashboard">
+        <div class="coach-app">
+          <header class="coach-topbar">
+            <div>
+              <span class="eyebrow">Coach dashboard</span>
+              <h1>Anika - Paris readiness plan</h1>
+            </div>
+            <div class="coach-actions">
+              <button type="button" data-coach-target="coach-planner">
+                <i data-lucide="calendar-plus"></i>
+                Plan mission
+              </button>
+              <button type="button" data-coach-target="coach-attempt">
+                <i data-lucide="clipboard-check"></i>
+                Review attempt
+              </button>
+            </div>
+          </header>
+
+          <nav class="coach-tabs" aria-label="Coach dashboard sections">
+            <button class="is-active" type="button" data-coach-target="coach-overview">Overview</button>
+            <button type="button" data-coach-target="coach-weekly">Weekly progress</button>
+            <button type="button" data-coach-target="coach-planner">Mission planner</button>
+            <button type="button" data-coach-target="coach-attempt">Attempt review</button>
+            <button type="button" data-coach-target="coach-mistakes">Mistake bank</button>
+            <button type="button" data-coach-target="coach-editor">Content editor</button>
+          </nav>
+
+          <section class="coach-screen is-active" id="coach-overview" aria-labelledby="coach-overview-title">
+            <div class="coach-grid two">
+              <article class="coach-card profile-card">
+                <div class="avatar">A</div>
+                <div>
+                  <span>Learner overview</span>
+                  <h2 id="coach-overview-title">Anika</h2>
+                  <p>A2+ - Goal: B1 practical confidence - Move date: 12 days away</p>
+                </div>
+              </article>
+              <article class="coach-card readiness-wide">
+                <span>Paris readiness</span>
+                <strong>58%</strong>
+                <div class="progress-line"><span style="width: 58%"></span></div>
+                <p>Highest leverage: phone comprehension, repair vocabulary, longer polite requests.</p>
+              </article>
+            </div>
+            <div class="coach-grid four">
+              <article class="coach-card stat">
+                <span>Practice streak</span>
+                <strong>4 days</strong>
+              </article>
+              <article class="coach-card stat">
+                <span>Weekly missions</span>
+                <strong>4/5</strong>
+              </article>
+              <article class="coach-card stat">
+                <span>Speaking time</span>
+                <strong>32 min</strong>
+              </article>
+              <article class="coach-card stat">
+                <span>Review accuracy</span>
+                <strong>74%</strong>
+              </article>
+            </div>
+            <article class="coach-card">
+              <h2>Current coaching note</h2>
+              <p>Anika can state the problem clearly, but she often uses direct A2 phrasing when a softer B1 request would sound more natural. Assign one repair-call mission and two spaced review cards.</p>
+            </article>
+          </section>
+
+          <section class="coach-screen" id="coach-weekly" aria-labelledby="coach-weekly-title">
+            <div class="section-title">
+              <div>
+                <span class="eyebrow">Weekly progress</span>
+                <h2 id="coach-weekly-title">Four missions completed out of five.</h2>
+              </div>
+              <button type="button" data-coach-target="coach-planner">
+                <i data-lucide="calendar"></i>
+                Adjust week
+              </button>
+            </div>
+            <div class="coach-grid three">
+              <article class="coach-card stat">
+                <span>Listening</span>
+                <strong>62%</strong>
+                <div class="progress-line"><span style="width: 62%"></span></div>
+              </article>
+              <article class="coach-card stat">
+                <span>Speaking</span>
+                <strong>57%</strong>
+                <div class="progress-line sage"><span style="width: 57%"></span></div>
+              </article>
+              <article class="coach-card stat">
+                <span>Review</span>
+                <strong>74%</strong>
+                <div class="progress-line burgundy"><span style="width: 74%"></span></div>
+              </article>
+            </div>
+            <article class="coach-card progress-table">
+              <div class="table-row head">
+                <span>Mission</span><span>Skill</span><span>Status</span><span>Signal</span>
+              </div>
+              <div class="table-row">
+                <span>Heating repair call</span><span>Apartment</span><span>Completed</span><span>Needs softer request</span>
+              </div>
+              <div class="table-row">
+                <span>Pharmacy symptoms</span><span>Healthcare</span><span>Completed</span><span>Vocabulary improving</span>
+              </div>
+              <div class="table-row">
+                <span>Navigo card issue</span><span>Transport</span><span>Completed</span><span>Good clarification</span>
+              </div>
+              <div class="table-row">
+                <span>Proof of address</span><span>Admin</span><span>Planned</span><span>High priority</span>
+              </div>
+            </article>
+          </section>
+
+          <section class="coach-screen" id="coach-planner" aria-labelledby="coach-planner-title">
+            <div class="section-title">
+              <div>
+                <span class="eyebrow">Mission planner</span>
+                <h2 id="coach-planner-title">Next five practical missions.</h2>
+              </div>
+              <button type="button">
+                <i data-lucide="plus"></i>
+                New mission
+              </button>
+            </div>
+            <div class="planner-layout">
+              <article class="coach-card planner-list">
+                <button class="planner-item is-selected" type="button">
+                  <span>Today</span>
+                  <strong>Report apartment heating problem</strong>
+                  <small>Phone call - B1 request softening</small>
+                </button>
+                <button class="planner-item" type="button">
+                  <span>Tomorrow</span>
+                  <strong>Ask the mairie about a missing document</strong>
+                  <small>Admin counter - clarification</small>
+                </button>
+                <button class="planner-item" type="button">
+                  <span>Fri</span>
+                  <strong>Describe symptoms at a pharmacy</strong>
+                  <small>Daily life - concise symptom detail</small>
+                </button>
+              </article>
+              <article class="coach-card planner-detail">
+                <span>Selected mission</span>
+                <h3>Report a problem with your apartment heating</h3>
+                <div class="tag-row">
+                  <span>A2+/B1</span>
+                  <span>Apartment</span>
+                  <span>Phone</span>
+                </div>
+                <p>Objective: learner states the problem, gives a timeline, and asks for someone to pass by using conditional politeness.</p>
+                <button type="button" data-coach-target="coach-editor">
+                  <i data-lucide="pencil"></i>
+                  Edit content
+                </button>
+              </article>
+            </div>
+          </section>
+
+          <section class="coach-screen" id="coach-attempt" aria-labelledby="coach-attempt-title">
+            <div class="section-title">
+              <div>
+                <span class="eyebrow">Attempt review</span>
+                <h2 id="coach-attempt-title">Heating call - latest attempt.</h2>
+              </div>
+              <button type="button" data-coach-target="coach-mistakes">
+                <i data-lucide="bookmark-plus"></i>
+                Save correction
+              </button>
+            </div>
+            <div class="attempt-layout">
+              <article class="coach-card">
+                <h3>Transcript excerpt</h3>
+                <p><strong>Anika:</strong> Bonjour, je vous appelle au sujet du chauffage. Le chauffage ne fonctionne plus depuis hier. Quelqu'un peut venir demain ?</p>
+                <p><strong>Coach note:</strong> The request is understandable. Upgrade the final question to conditional politeness.</p>
+              </article>
+              <article class="coach-card feedback-editor">
+                <h3>Feedback draft</h3>
+                <label>
+                  <span>Encouraging summary</span>
+                  <textarea>Clear and practical. The problem and timeline were easy to understand.</textarea>
+                </label>
+                <label>
+                  <span>Correction</span>
+                  <textarea>Replace "Quelqu'un peut venir ?" with "Est-ce que quelqu'un pourrait passer ?"</textarea>
+                </label>
+                <button type="button">
+                  <i data-lucide="send"></i>
+                  Send feedback
+                </button>
+              </article>
+            </div>
+          </section>
+
+          <section class="coach-screen" id="coach-mistakes" aria-labelledby="coach-mistakes-title">
+            <div class="section-title">
+              <div>
+                <span class="eyebrow">Mistake bank</span>
+                <h2 id="coach-mistakes-title">Review items by pattern.</h2>
+              </div>
+              <button type="button">
+                <i data-lucide="download"></i>
+                Export
+              </button>
+            </div>
+            <article class="coach-card progress-table">
+              <div class="table-row head">
+                <span>Pattern</span><span>Learner sentence</span><span>Coach version</span><span>Due</span>
+              </div>
+              <div class="table-row">
+                <span>Conditional request</span><span>Quelqu'un peut venir ?</span><span>Est-ce que quelqu'un pourrait passer ?</span><span>Today</span>
+              </div>
+              <div class="table-row">
+                <span>Negation order</span><span>Est ne marche pas</span><span>Ne fonctionne plus</span><span>Today</span>
+              </div>
+              <div class="table-row">
+                <span>Phone opener</span><span>J'appelle pour...</span><span>Je vous appelle au sujet de...</span><span>Tomorrow</span>
+              </div>
+            </article>
+          </section>
+
+          <section class="coach-screen" id="coach-editor" aria-labelledby="coach-editor-title">
+            <div class="section-title">
+              <div>
+                <span class="eyebrow">Content editor</span>
+                <h2 id="coach-editor-title">Heating repair mission.</h2>
+              </div>
+              <button type="button">
+                <i data-lucide="save"></i>
+                Save draft
+              </button>
+            </div>
+            <div class="editor-layout">
+              <article class="coach-card content-form">
+                <label>
+                  <span>Mission title</span>
+                  <input type="text" value="Report a problem with your apartment heating">
+                </label>
+                <label>
+                  <span>Scenario</span>
+                  <textarea>Call the property contact, explain that the heating stopped yesterday, and ask whether someone could come by.</textarea>
+                </label>
+                <label>
+                  <span>Key phrases</span>
+                  <textarea>Je vous appelle au sujet de...
+Le chauffage ne fonctionne plus depuis hier.
+Est-ce que quelqu'un pourrait passer ?
+Je voulais savoir s'il serait possible de...</textarea>
+                </label>
+              </article>
+              <article class="coach-card preview-panel">
+                <span>Mobile preview</span>
+                <h3>Report a problem with your apartment heating.</h3>
+                <p>Call a landlord, explain the issue, and ask for someone to come by.</p>
+                <div class="tag-row">
+                  <span>Apartment</span>
+                  <span>A2+/B1</span>
+                  <span>Phone call</span>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
