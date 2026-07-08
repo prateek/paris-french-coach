@@ -1,0 +1,27 @@
+{
+  "name": "paris-french-coach",
+  "version": "1.0.0",
+  "description": "Clickable Paris French Coach prototype",
+  "main": "script.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prateek/paris-french-coach.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/prateek/paris-french-coach/issues"
+  },
+  "homepage": "https://prateek.github.io/paris-french-coach/",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}
