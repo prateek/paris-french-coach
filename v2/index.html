@@ -1,0 +1,1295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Paris French Coach — high-fidelity clickable prototype (17 mobile screens + coach dashboard).">
+<title>Paris French Coach — Prototype</title>
+</head>
+<body>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  :root{
+    --paper:#F2ECDF;      /* limestone ground */
+    --paper-2:#EBE3D2;    /* deeper sand / inset */
+    --card:#FCFAF4;       /* warm white */
+    --card-2:#F6F1E7;     /* tonal card */
+    --ink:#232A2E;        /* zinc-charcoal */
+    --ink-2:#5E6A66;      /* secondary */
+    --muted:#6A6E60;      /* tertiary — AA on warm surfaces */
+    --line:rgba(35,42,46,.10);
+    --line-2:rgba(35,42,46,.06);
+    --green:#2F5D4E;      /* Luxembourg / Métro green — brand */
+    --green-d:#244A3E;    /* pressed */
+    --green-weak:#E5ECE3; /* selected / tint */
+    --gold:#B48A3C;
+    --amber:#C0803A;      /* corrections / attention */
+    --amber-weak:#F4E9D6;
+    --berry:#9C5060;      /* errors, rare */
+    --sky:#3E6079;        /* info, sparing */
+    --white:#fff;
+    --r:20px; --r-lg:28px; --r-sm:13px;
+    --sh-1:0 1px 2px rgba(35,42,46,.05);
+    --sh-2:0 10px 30px -12px rgba(35,42,46,.20);
+    --sh-3:0 24px 60px -20px rgba(35,42,46,.28);
+    --sf:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,system-ui,sans-serif;
+    --serif:ui-serif,"New York",Georgia,"Times New Roman",serif;
+    --phone-w:392px; --phone-h:848px;
+  }
+  body{
+    font-family:var(--sf);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 80% -8%, #F7F2E8 0%, rgba(247,242,232,0) 60%),
+      radial-gradient(900px 700px at 0% 110%, #EEE7D8 0%, rgba(238,231,216,0) 55%),
+      #EDE6D7;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    min-height:100vh;
+  }
+  svg.ic{width:1em;height:1em;display:inline-block;vertical-align:-.12em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- top chrome (prototype controls) ---------- */
+  .chrome{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:16px;
+    padding:14px clamp(16px,4vw,40px);backdrop-filter:blur(14px);
+    background:linear-gradient(#efe9dbe6,#efe9dbb0);border-bottom:1px solid var(--line-2)}
+  .brand{display:flex;align-items:center;gap:11px;margin-right:auto}
+  .brand .mark{width:34px;height:34px;border-radius:10px;background:var(--green);color:#EFE7D3;
+    display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:19px;box-shadow:var(--sh-1)}
+  .brand b{font-weight:600;font-size:15px;letter-spacing:.2px}
+  .brand span{display:block;font-size:11.5px;color:var(--ink-2);font-weight:500}
+  .seg{display:inline-flex;background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:3px}
+  .seg button{appearance:none;border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;
+    color:var(--ink-2);padding:7px 15px;border-radius:9px;cursor:pointer}
+  .seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--sh-1)}
+  .ghostbtn{appearance:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;
+    background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px 14px;display:inline-flex;
+    align-items:center;gap:7px}
+  .ghostbtn:hover{background:var(--card-2)}
+
+  /* screen index panel */
+  .index{position:fixed;inset:0;z-index:80;display:none}
+  .index.open{display:block}
+  .index__scrim{position:absolute;inset:0;background:rgba(35,42,46,.34)}
+  .index__panel{position:absolute;top:0;right:0;height:100%;width:min(380px,88vw);background:var(--paper);
+    box-shadow:var(--sh-3);padding:22px;overflow:auto;border-left:1px solid var(--line)}
+  .index__panel h4{margin:18px 0 9px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .index__panel h4:first-child{margin-top:0}
+  .idx{display:grid;gap:6px}
+  .idx button{appearance:none;text-align:left;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;display:flex;gap:10px;align-items:center}
+  .idx button:hover{background:var(--green-weak);border-color:transparent}
+  .idx button i{font-style:normal;width:22px;height:22px;border-radius:7px;background:var(--paper-2);display:grid;
+    place-items:center;font-size:11px;font-weight:700;color:var(--ink-2)}
+
+  /* ---------- stage ---------- */
+  .stage{display:none;padding:34px 20px 60px}
+  .stage.on{display:block}
+  #stage-mobile{display:flex;justify-content:center}
+
+  /* ---------- iPhone ---------- */
+  .phone{position:relative;width:var(--phone-w);height:var(--phone-h);border-radius:56px;
+    background:#0f1512;padding:11px;box-shadow:0 50px 120px -40px rgba(20,30,26,.55),0 8px 20px rgba(20,30,26,.25);
+    flex:0 0 auto}
+  .phone__screen{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--paper);
+    display:flex;flex-direction:column}
+  .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:33px;background:#0f1512;
+    border-radius:20px;z-index:40}
+  .statusbar{position:relative;z-index:30;height:52px;flex:0 0 auto;display:flex;align-items:flex-end;
+    justify-content:space-between;padding:0 26px 7px;font-size:14px;font-weight:600;letter-spacing:.2px;color:var(--ink)}
+  .statusbar .sb-right{display:flex;align-items:center;gap:6px}
+  .statusbar svg{width:17px;height:12px;stroke-width:0;fill:currentColor}
+  .viewport{position:relative;flex:1 1 auto;overflow:hidden}
+  .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:6px 0 22px;
+    opacity:0;visibility:hidden;transform:translateX(14px);
+    transition:opacity .32s ease,transform .32s ease,visibility .32s;-webkit-overflow-scrolling:touch}
+  .screen.is-active{opacity:1;visibility:visible;transform:none}
+  .screen::-webkit-scrollbar{width:0}
+  .pad{padding:0 20px}
+
+  /* nav bar inside app */
+  .navbar{display:flex;align-items:center;gap:8px;padding:4px 14px 8px;min-height:44px}
+  .navbar .nb-title{font-size:16px;font-weight:600;margin:0 auto;letter-spacing:.2px}
+  .iconbtn{appearance:none;border:0;background:var(--card);width:34px;height:34px;border-radius:50%;
+    display:grid;place-items:center;color:var(--ink);cursor:pointer;box-shadow:var(--sh-1);font-size:17px}
+  .iconbtn.plain{background:transparent;box-shadow:none;color:var(--green)}
+  .navbar .nb-link{font-size:15px;font-weight:600;color:var(--green);cursor:pointer;background:none;border:0;font-family:inherit}
+
+  .largetitle{font-size:30px;line-height:1.1;font-weight:700;letter-spacing:-.4px;margin:4px 0 2px;text-wrap:balance}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin:0}
+  .eyebrow.amber{color:var(--amber)} .eyebrow.muted{color:var(--muted)}
+  .lede{font-size:15.5px;line-height:1.5;color:var(--ink-2);margin:8px 0 0}
+  h2.h{font-size:20px;font-weight:700;letter-spacing:-.2px;margin:0}
+  .sub{font-size:13.5px;color:var(--ink-2);line-height:1.45}
+  .cap{font-size:12px;color:var(--muted)}
+  .serif{font-family:var(--serif)}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  /* stacks */
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .stack-sm{display:flex;flex-direction:column;gap:9px}
+  .flow{display:flex;align-items:center;gap:10px}
+  .between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .grow{flex:1 1 auto;min-width:0}
+  .wrap{flex-wrap:wrap}
+
+  /* cards */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--sh-1)}
+  .card.tonal{background:var(--card-2);box-shadow:none}
+  .card.tap{cursor:pointer;transition:transform .12s ease,box-shadow .2s ease}
+  .card.tap:active{transform:scale(.985)}
+  .card.tap:hover{box-shadow:var(--sh-2)}
+  .card.pop{box-shadow:var(--sh-2)}
+  .hero-card{position:relative;overflow:hidden;background:
+      radial-gradient(120% 120% at 88% 8%, #376a58 0%, #2c5849 46%, #244a3e 100%);
+    color:#F1ECDD;border:0;border-radius:var(--r-lg);padding:20px}
+  .hero-card .eyebrow{color:#B9D3C4}
+  .hero-card .thread{position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;
+    border:1px solid rgba(233,224,199,.18)}
+  .hero-card .thread.two{right:6px;top:6px;width:96px;height:96px}
+
+  /* buttons */
+  .btn{appearance:none;font:inherit;font-weight:600;font-size:16px;border-radius:15px;padding:15px 18px;border:0;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;transition:transform .12s,filter .2s,background .2s}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--green);color:#F1ECDD;box-shadow:0 8px 18px -8px rgba(47,93,78,.7)}
+  .btn.primary:hover{background:var(--green-d)}
+  .btn.tonal{background:var(--green-weak);color:var(--green)}
+  .btn.tonal:hover{filter:brightness(.98)}
+  .btn.neutral{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost{background:transparent;color:var(--green);box-shadow:none}
+  .btn.sm{font-size:14px;padding:11px 15px;border-radius:12px;width:auto}
+  .btn.amber{background:var(--amber);color:#fff;box-shadow:0 8px 18px -8px rgba(192,128,58,.7)}
+  .btnrow{display:flex;gap:10px}
+  .btnrow .btn{width:auto;flex:1}
+
+  /* chips / tags */
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink-2);
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
+  .chip.on{background:var(--green);color:#F1ECDD;border-color:transparent}
+  .chip.solid{background:var(--green-weak);color:var(--green);border-color:transparent}
+  .tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.03em;
+    padding:4px 9px;border-radius:7px;background:var(--paper-2);color:var(--ink-2);text-transform:uppercase}
+  .tag.green{background:var(--green-weak);color:var(--green)}
+  .tag.amber{background:var(--amber-weak);color:#946018}
+  .tag.gold{background:#F1E7CE;color:#8a6a1f}
+
+  /* list rows */
+  .list{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .row{display:flex;align-items:center;gap:13px;padding:14px 15px;cursor:pointer;background:none;border:0;width:100%;
+    font:inherit;text-align:left;color:var(--ink);border-top:1px solid var(--line-2)}
+  .row:first-child{border-top:0}
+  .row:hover{background:var(--card-2)}
+  .row .lead{width:38px;height:38px;border-radius:11px;background:var(--green-weak);color:var(--green);
+    display:grid;place-items:center;font-size:17px;flex:0 0 auto}
+  .row .lead.amber{background:var(--amber-weak);color:#946018}
+  .row .lead.sand{background:var(--paper-2);color:var(--ink-2)}
+  .row .rtitle{font-size:15px;font-weight:600}
+  .row .rsub{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .row .chev{color:var(--muted);font-size:15px}
+
+  /* rings & bars */
+  .ring{--p:58;--sz:120px;--t:11px;width:var(--sz);height:var(--sz);border-radius:50%;flex:0 0 auto;
+    background:conic-gradient(var(--green) calc(var(--p)*1%),var(--green-weak) 0);display:grid;place-items:center;position:relative}
+  .ring .rc{width:calc(var(--sz) - var(--t)*2);height:calc(var(--sz) - var(--t)*2);border-radius:50%;
+    background:var(--card);display:grid;place-items:center;text-align:center;box-shadow:inset 0 0 0 1px var(--line-2)}
+  .ring .rc b{font-family:var(--serif);font-size:27px;font-weight:600;line-height:1}
+  .ring .rc small{display:block;font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.06em;margin-top:3px;text-transform:uppercase}
+  .ring.gold{background:conic-gradient(var(--gold) calc(var(--p)*1%),#EEE4CC 0)}
+
+  .track{height:9px;border-radius:99px;background:var(--paper-2);overflow:hidden}
+  .track i{display:block;height:100%;border-radius:99px;background:var(--green)}
+  .track.amber i{background:var(--amber)} .track.gold i{background:var(--gold)}
+  .skill{display:grid;grid-template-columns:96px 1fr auto;align-items:center;gap:11px}
+  .skill .sname{font-size:13.5px;font-weight:600}
+  .skill .sval{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* audio player + waveform */
+  .player{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px;box-shadow:var(--sh-1)}
+  .wave{display:flex;align-items:center;gap:3px;height:40px}
+  .wave span{flex:1;background:var(--green);border-radius:2px;opacity:.32}
+  .wave span.on{opacity:1}
+  .playbtn{width:52px;height:52px;border-radius:50%;background:var(--green);color:#F1ECDD;border:0;cursor:pointer;
+    display:grid;place-items:center;font-size:20px;flex:0 0 auto;box-shadow:0 8px 18px -8px rgba(47,93,78,.7)}
+  .scrub{height:5px;border-radius:99px;background:var(--paper-2);position:relative;margin:12px 2px 6px}
+  .scrub i{position:absolute;left:0;top:0;height:100%;border-radius:99px;background:var(--green)}
+  .scrub b{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--card);
+    box-shadow:0 1px 4px rgba(0,0,0,.25),inset 0 0 0 3px var(--green);transform:translate(-50%,-50%)}
+  .times{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* transcript */
+  .tline{padding:10px 0;border-top:1px solid var(--line-2);font-size:15px;line-height:1.5}
+  .tline:first-child{border-top:0}
+  .tline .who{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+  .tline .en{display:block;font-size:13px;color:var(--ink-2);margin-top:3px}
+  .tline.key{background:var(--green-weak);margin:0 -12px;padding:10px 12px;border-radius:12px;border-top:0}
+
+  /* phrase card */
+  .phrase{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px;box-shadow:var(--sh-1)}
+  .phrase .fr{font-size:18px;font-weight:600;line-height:1.35;letter-spacing:-.1px}
+  .phrase .en{font-size:14px;color:var(--ink-2);margin-top:4px}
+  .phrase .tip{font-size:12.5px;color:var(--muted);margin-top:9px;display:flex;gap:7px;line-height:1.4}
+  .phrase .tip svg{color:var(--gold);flex:0 0 auto;margin-top:1px}
+  .miniplay{width:40px;height:40px;border-radius:12px;background:var(--green-weak);color:var(--green);border:0;
+    cursor:pointer;display:grid;place-items:center;font-size:16px;flex:0 0 auto}
+
+  /* record */
+  .recwrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:14px 0}
+  .recbtn{width:118px;height:118px;border-radius:50%;background:var(--green);border:0;cursor:pointer;color:#F1ECDD;
+    display:grid;place-items:center;font-size:40px;box-shadow:0 16px 36px -12px rgba(47,93,78,.75);position:relative}
+  .recbtn::before{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid var(--green);opacity:.28;animation:pulse 2.4s ease-out infinite}
+  .recbtn.rec{background:var(--berry)} .recbtn.rec::before{border-color:var(--berry)}
+  @keyframes pulse{0%{transform:scale(.9);opacity:.5}70%{transform:scale(1.25);opacity:0}100%{opacity:0}}
+  .rectime{font-family:var(--serif);font-size:34px;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+  .livewave{display:flex;align-items:flex-end;gap:3px;height:38px}
+  .livewave span{width:4px;background:var(--green);border-radius:2px;animation:bob 1s ease-in-out infinite}
+  @keyframes bob{0%,100%{height:20%}50%{height:100%}}
+
+  /* feedback */
+  .fb-summary{background:
+      radial-gradient(120% 130% at 90% 0%, #376a58 0%, #2b5748 55%, #234a3d 100%);
+    color:#EEE8D8;border-radius:var(--r-lg);padding:19px;position:relative;overflow:hidden}
+  .fb-summary .score{font-family:var(--serif);font-size:42px;line-height:1;font-weight:600}
+  .fbsec{border-radius:var(--r);padding:15px;border:1px solid var(--line)}
+  .fbsec.good{background:var(--green-weak);border-color:transparent}
+  .fbsec.corr{background:var(--card)}
+  .fbsec h5{margin:0 0 4px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+  .fbsec.good h5{color:var(--green)}
+  .fbli{display:flex;gap:9px;padding:7px 0;font-size:14px;line-height:1.45}
+  .fbli svg{flex:0 0 auto;margin-top:2px}
+  .corr-item{border-top:1px solid var(--line-2);padding:11px 0}
+  .corr-item:first-of-type{border-top:0}
+  .corr-item .said{font-size:14px;color:var(--berry);text-decoration:line-through;text-decoration-color:rgba(156,80,96,.5)}
+  .corr-item .fix{font-size:15px;font-weight:600;color:var(--ink);margin-top:3px}
+  .corr-item .why{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .natural{background:var(--card-2);border-radius:var(--r);padding:15px;border:1px dashed var(--line)}
+  .natural .fr{font-size:15.5px;line-height:1.55;font-weight:500}
+
+  /* mission steps */
+  .steps{display:flex;flex-direction:column;gap:2px}
+  .step{display:flex;align-items:center;gap:13px;padding:12px 0;position:relative}
+  .step .dot{width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-size:13px;
+    font-weight:700;background:var(--paper-2);color:var(--ink-2)}
+  .step .dot.done{background:var(--green);color:#F1ECDD}
+  .step .dot.now{background:var(--green-weak);color:var(--green);box-shadow:0 0 0 3px var(--green-weak)}
+  .step .connector{position:absolute;left:14px;top:42px;bottom:-12px;width:2px;background:var(--line)}
+  .step .stitle{font-size:15px;font-weight:600}
+  .step .ssub{font-size:12.5px;color:var(--muted)}
+
+  /* progress bits */
+  .kpi{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--sh-1)}
+  .metric .mnum{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1;letter-spacing:.3px}
+  .metric .mlab{font-size:12px;color:var(--muted);margin-top:5px;font-weight:600}
+  .metric .mtop{display:flex;align-items:center;justify-content:space-between;color:var(--green)}
+  .metric.amber .mtop{color:var(--amber)} .metric.gold .mtop{color:var(--gold)}
+  .bars{display:flex;align-items:flex-end;gap:9px;height:110px;padding-top:6px}
+  .bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end}
+  .bars .b i{width:100%;max-width:26px;border-radius:7px 7px 3px 3px;background:var(--green-weak)}
+  .bars .b.on i{background:var(--green)}
+  .bars .b small{font-size:11px;color:var(--muted);font-weight:600}
+
+  /* chat */
+  .chatwrap{display:flex;flex-direction:column;height:100%}
+  .chatscroll{flex:1;overflow-y:auto;padding:8px 16px 12px;display:flex;flex-direction:column;gap:12px}
+  .bubble{max-width:82%;padding:11px 14px;border-radius:19px;font-size:15px;line-height:1.4;position:relative}
+  .bubble .en{display:block;font-size:12.5px;opacity:.7;margin-top:4px}
+  .bubble.them{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:6px;align-self:flex-start}
+  .bubble.me{background:var(--green);color:#F1ECDD;border-bottom-right-radius:6px;align-self:flex-end}
+  .bubble.me .en{opacity:.8}
+  .bubble.correct{background:var(--amber-weak);border:1px solid rgba(192,128,58,.3);align-self:flex-end;color:#6c4718;font-size:13px;border-radius:14px}
+  .scenechip{align-self:center;background:var(--paper-2);color:var(--ink-2);font-size:11.5px;font-weight:600;
+    padding:6px 12px;border-radius:999px}
+  .composer{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:10px 14px 14px;border-top:1px solid var(--line-2);background:var(--paper)}
+  .composer .field{flex:1;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:11px 15px;font-size:14px;color:var(--muted)}
+  .composer .mic{width:44px;height:44px;border-radius:50%;background:var(--green);color:#F1ECDD;border:0;display:grid;place-items:center;font-size:17px;flex:0 0 auto}
+
+  /* tab bar */
+  .tabbar{flex:0 0 auto;display:flex;padding:9px 8px 0;background:linear-gradient(#fcfaf4d0,#fcfaf4f2);
+    border-top:1px solid var(--line-2);backdrop-filter:blur(12px)}
+  .tab{flex:1;background:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:5px 0;color:var(--muted);font-family:inherit}
+  .tab svg{width:24px;height:24px}
+  .tab span{font-size:10.5px;font-weight:600;letter-spacing:.1px}
+  .tab.is-active{color:var(--green)}
+  .homeind{height:22px;display:grid;place-items:center;background:#fcfaf4}
+  .homeind i{width:135px;height:5px;border-radius:99px;background:var(--ink);opacity:.85}
+  .phone[data-chrome="full"] .tabbar,.phone[data-chrome="full"] .homeind{display:none}
+
+  /* ---------- desktop coach dashboard ---------- */
+  #stage-desktop{padding-top:20px}
+  .mac{max-width:1160px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;box-shadow:var(--sh-3)}
+  .mac__bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--card-2);border-bottom:1px solid var(--line)}
+  .mac__bar .dots{display:flex;gap:7px}.mac__bar .dots i{width:12px;height:12px;border-radius:50%;background:#d9cfba}
+  .mac__bar .dots i:nth-child(1){background:#E5A79B}.mac__bar .dots i:nth-child(2){background:#E7CF9A}.mac__bar .dots i:nth-child(3){background:#A9C7AE}
+  .mac__bar .url{margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:8px;font-size:12.5px;
+    color:var(--ink-2);padding:6px 16px;font-weight:500}
+  .dash{display:grid;grid-template-columns:232px 1fr;min-height:660px}
+  .side{background:var(--card-2);border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:3px}
+  .side .lear{display:flex;align-items:center;gap:11px;padding:8px 8px 16px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+  .side .lear .av{width:40px;height:40px;border-radius:12px;background:var(--green);color:#EFE7D3;display:grid;place-items:center;
+    font-weight:600;font-family:var(--serif);font-size:18px}
+  .side .lear b{font-size:14px}.side .lear span{font-size:12px;color:var(--muted)}
+  .side a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;font-size:14px;font-weight:500;
+    color:var(--ink-2);cursor:pointer;text-decoration:none}
+  .side a svg{width:19px;height:19px}
+  .side a:hover{background:var(--paper)}
+  .side a.on{background:var(--green);color:#F1ECDD}
+  .side .side-foot{margin-top:auto;font-size:11.5px;color:var(--muted);padding:10px 12px;line-height:1.4}
+  .main{padding:26px 30px;overflow:auto;background:var(--paper)}
+  .view{display:none}.view.on{display:block}
+  .dhead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .dhead h1{font-size:24px;font-weight:700;letter-spacing:-.3px;margin:0}
+  .dhead p{margin:5px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .dgrid{display:grid;gap:16px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--sh-1)}
+  .panel h3{margin:0 0 3px;font-size:15px;font-weight:700}
+  .panel .phint{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+  .kpi4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+  .tbl th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 12px 10px}
+  .tbl td{padding:12px;border-top:1px solid var(--line-2);vertical-align:middle}
+  .tbl tr:hover td{background:var(--card-2)}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px}
+  .pill.g{background:var(--green-weak);color:var(--green)}.pill.a{background:var(--amber-weak);color:#946018}
+  .pill.n{background:var(--paper-2);color:var(--ink-2)}.pill.b{background:#e3ebef;color:var(--sky)}
+  .field-lbl{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;display:block}
+  .input{width:100%;font:inherit;font-size:14px;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:11px 13px;color:var(--ink)}
+  textarea.input{resize:vertical;line-height:1.5}
+  .radar-bar{display:grid;grid-template-columns:110px 1fr 40px;align-items:center;gap:10px;margin:9px 0}
+  .radar-bar b{font-size:13px;font-weight:600}.radar-bar span{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+  .day{border:1px solid var(--line);border-radius:12px;padding:10px;min-height:120px;background:var(--paper);display:flex;flex-direction:column;gap:7px}
+  .day .dname{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+  .assign{background:var(--green-weak);color:var(--green);border-radius:9px;padding:8px;font-size:12px;font-weight:600;line-height:1.3}
+  .assign.amber{background:var(--amber-weak);color:#946018}
+  .assign.empty{background:transparent;border:1px dashed var(--line);color:var(--muted);text-align:center;font-weight:500}
+
+  .toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);z-index:120;
+    background:var(--ink);color:#F1ECDD;padding:13px 20px;border-radius:14px;font-size:14px;font-weight:600;
+    box-shadow:var(--sh-3);opacity:0;transition:opacity .3s,transform .3s;display:flex;align-items:center;gap:9px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .divider{height:1px;background:var(--line);margin:2px 0}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:8px}
+  .hero-card :focus-visible,.fb-summary :focus-visible,.side a:focus-visible,.tab:focus-visible,.btn.primary:focus-visible{outline-color:#E9E0C7}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media (max-width:520px){.chrome{flex-wrap:wrap;gap:10px}.brand span{display:none}
+    #stage-mobile{overflow:hidden}
+    .phone{transform:scale(.84);transform-origin:top center;margin:0 calc((392px * -0.08) - 20px)}}
+</style>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></symbol>
+    <symbol id="i-today" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M4 9h16M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="2" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-speak" viewBox="0 0 24 24"><path d="M5 11v2M9 8v8M12 5v14M15 8v8M19 11v2"/></symbol>
+    <symbol id="i-listen" viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="3" y="13" width="4" height="7" rx="2"/><rect x="17" y="13" width="4" height="7" rx="2"/></symbol>
+    <symbol id="i-review" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-.6 4"/><path d="M20 5v6h-6"/></symbol>
+    <symbol id="i-progress" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M8 16l3-4 3 2 4-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4 10-11"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c3 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10c-.7.7-1 1.5-1 2H9c0-.5-.3-1.3-1-2A6 6 0 0 1 12 3z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+    <symbol id="i-slow" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2M8.5 8.5l-2-2M17.5 8.5l2-2"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2zM20 5a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 20 14"><path d="M10 11.5l-.01.01M6 8.5a6 6 0 0 1 8 0M3 5.5a10 10 0 0 1 14 0"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.5-9-9a4.5 4.5 0 0 1 9-2 4.5 4.5 0 0 1 9 2c-2 4.5-9 9-9 9z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6M17 20a5.5 5.5 0 0 0-3-4.9"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L18 10l-4-4L4 16zM14 6l4 4"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M4 10h16M5 10l7-5 7 5M6 10v7M10 10v7M14 10v7M18 10v7M4 20h16"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17.5v.5"/></symbol>
+  </defs>
+</svg>
+
+<div class="chrome">
+  <div class="brand">
+    <div class="mark serif">C</div>
+    <div><b>Paris French Coach</b><span>Interactive prototype · Anika · A2+ → B1</span></div>
+  </div>
+  <div class="seg" role="tablist" aria-label="Prototype view">
+    <button class="on" id="tg-app" onclick="showStage('mobile')">Learner app</button>
+    <button id="tg-coach" onclick="showStage('desktop')">Coach dashboard</button>
+  </div>
+  <button class="ghostbtn" onclick="toggleIndex(true)"><svg class="ic"><use href="#i-search"/></svg>Screens</button>
+</div>
+
+<!-- ============ MOBILE ============ -->
+<div class="stage on" id="stage-mobile">
+  <div class="phone" id="phone" data-chrome="full">
+    <div class="island"></div>
+    <div class="phone__screen">
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="sb-right"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4" y="5" width="3" height="7" rx="1"/><rect x="8" y="2.5" width="3" height="9.5" rx="1"/><rect x="12" y="0" width="3" height="12" rx="1"/></svg>
+          <svg class="ic" style="width:17px;height:13px;stroke-width:1.6;fill:none"><use href="#i-wifi"/></svg>
+          <svg viewBox="0 0 26 13"><rect x="0.5" y="1" width="21" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1"/><rect x="2" y="2.5" width="16" height="8" rx="1.5"/><rect x="23" y="4" width="2" height="5" rx="1"/></svg>
+        </span>
+      </div>
+      <div class="viewport" id="viewport">
+
+        <!-- 1 · WELCOME -->
+        <section class="screen is-active" id="s-welcome" data-tab="" data-full="1">
+          <div class="pad" style="min-height:100%;display:flex;flex-direction:column">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px;padding:18px 0">
+              <div class="hero-card" style="width:100%;padding:26px 22px 24px">
+                <div class="thread"></div><div class="thread two"></div>
+                <p class="eyebrow" style="position:relative">Bienvenue</p>
+                <h1 class="serif" style="font-size:36px;line-height:1.05;font-weight:600;margin:12px 0 0;position:relative">Real French,<br>for real Paris life.</h1>
+                <p style="position:relative;font-size:15px;line-height:1.5;color:#CDDDD1;margin:14px 0 0;max-width:34ch">
+                  A calm daily coach that gets you speaking with confidence before you land. No cartoon mascots, no cramming — just useful French, a little each day.</p>
+              </div>
+              <div class="stack-sm" style="width:100%;margin-top:20px">
+                <div class="flow"><span class="tag green">A1–B2</span><span class="sub">Built around your move-in date</span></div>
+                <div class="flow"><span class="tag gold">10 min/day</span><span class="sub">Listen · speak · review · repeat</span></div>
+              </div>
+            </div>
+            <div class="stack-sm" style="padding-bottom:12px">
+              <button class="btn primary" data-nav="s-goal">Commençons <svg class="ic"><use href="#i-arrow"/></svg></button>
+              <button class="btn ghost" data-nav="s-today">I already have an account</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2 · GOAL SETUP -->
+        <section class="screen" id="s-goal" data-tab="" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-welcome"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 1 of 2</span><button class="nb-link" data-nav="s-placement">Skip</button></div>
+          <div class="pad stack">
+            <div><p class="eyebrow">Your goal</p><h1 class="largetitle">What do you want French to do for you?</h1></div>
+            <div class="stack-sm">
+              <button class="card tap between" style="border-color:var(--green);background:var(--green-weak)" onclick="pick(this)">
+                <div class="grow"><div style="font-size:16px;font-weight:600">B1 practical confidence</div><div class="sub">Handle daily life, admin and small talk without switching to English.</div></div>
+                <svg class="ic" style="color:var(--green);font-size:22px"><use href="#i-check"/></svg>
+              </button>
+              <button class="card tap between" onclick="pick(this)"><div class="grow"><div style="font-size:16px;font-weight:600">A2 survival basics</div><div class="sub">Order, ask directions, get by.</div></div></button>
+              <button class="card tap between" onclick="pick(this)"><div class="grow"><div style="font-size:16px;font-weight:600">B2 professional fluency</div><div class="sub">Work and nuanced conversation.</div></div></button>
+            </div>
+            <div>
+              <p class="eyebrow muted" style="color:var(--muted);margin-bottom:9px">When do you move to Paris?</p>
+              <div class="card between"><div class="flow"><svg class="ic" style="color:var(--green);font-size:19px"><use href="#i-cal"/></svg><b style="font-size:16px">19 July 2026</b></div><span class="tag green">in 12 days</span></div>
+            </div>
+            <div>
+              <p class="eyebrow muted" style="color:var(--muted);margin-bottom:9px">Mostly for…</p>
+              <div class="flow wrap"><span class="chip on">Daily life</span><span class="chip on">Admin &amp; housing</span><span class="chip">Work</span><span class="chip">Making friends</span></div>
+            </div>
+          </div>
+          <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-placement">Continue <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        </section>
+
+        <!-- 3 · PLACEMENT SNAPSHOT -->
+        <section class="screen" id="s-placement" data-tab="" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-goal"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 2 of 2</span><span style="width:34px"></span></div>
+          <div class="pad stack">
+            <div><p class="eyebrow">Your starting point</p><h1 class="largetitle">Here's where you're starting from.</h1><p class="lede">From your quick placement chat. We'll re-check this every couple of weeks.</p></div>
+            <div class="card pop" style="display:flex;align-items:center;gap:18px">
+              <div class="ring" style="--p:58;--sz:104px"><div class="rc"><b class="tnum">A2+</b><small>Level</small></div></div>
+              <div class="grow stack-sm">
+                <div><div style="font-size:13px;font-weight:700;color:var(--green)">Paris readiness</div><div class="flow" style="gap:8px"><b class="serif tnum" style="font-size:24px">58%</b><span class="cap">to B1 practical</span></div></div>
+                <div class="track"><i style="width:58%"></i></div>
+              </div>
+            </div>
+            <div class="stack-sm">
+              <div class="card"><div class="flow" style="align-items:flex-start;gap:11px"><svg class="ic" style="color:var(--green);font-size:20px;margin-top:1px"><use href="#i-check"/></svg><div><b style="font-size:14.5px">Your strengths</b><p class="sub" style="margin:3px 0 0">You understand slow, clear speech well and have solid everyday vocabulary.</p></div></div></div>
+              <div class="card"><div class="flow" style="align-items:flex-start;gap:11px"><svg class="ic" style="color:var(--amber);font-size:20px;margin-top:1px"><use href="#i-warn"/></svg><div><b style="font-size:14.5px">Where we'll focus</b><p class="sub" style="margin:3px 0 0">Speaking under pressure — phone calls, admin, and asking for things politely.</p></div></div></div>
+            </div>
+          </div>
+          <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-today">Build my plan <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        </section>
+
+        <!-- 4 · TODAY HOME -->
+        <section class="screen" id="s-today" data-tab="today">
+          <div class="pad" style="padding-top:8px">
+            <div class="between" style="align-items:flex-start">
+              <div><p class="cap" style="font-weight:600">Mardi 7 juillet</p><h1 class="largetitle" style="margin-top:2px">Bonjour, Anika</h1></div>
+              <div class="flow" style="gap:7px"><span class="chip" style="gap:5px;background:#F1E7CE;color:#8a6a1f;border:0"><svg class="ic" style="color:var(--gold)"><use href="#i-flame"/></svg>4</span>
+                <div style="width:38px;height:38px;border-radius:50%;background:var(--green);color:#EFE7D3;display:grid;place-items:center;font-weight:600;font-family:var(--serif)">A</div></div>
+            </div>
+          </div>
+          <div class="pad stack" style="margin-top:14px">
+            <div class="between card tonal" style="padding:13px 15px">
+              <div class="flow" style="gap:11px"><div class="ring" style="--p:58;--sz:54px;--t:6px"><div class="rc"><b style="font-size:14px" class="serif tnum">58%</b></div></div>
+                <div><div style="font-size:13.5px;font-weight:700">Paris readiness</div><div class="cap">12 days to your move · on track</div></div></div>
+              <svg class="ic" style="color:var(--muted)"><use href="#i-chev"/></svg>
+            </div>
+
+            <div>
+              <p class="eyebrow" style="margin-bottom:10px">Today's Paris mission</p>
+              <div class="card pop tap" data-nav="s-mission" style="padding:0;overflow:hidden">
+                <div class="hero-card" style="border-radius:0;padding:19px 18px">
+                  <div class="thread"></div>
+                  <div class="flow" style="gap:8px;position:relative"><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">Housing</span><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">B1 · ~10 min</span></div>
+                  <h2 class="serif" style="font-size:23px;font-weight:600;line-height:1.15;margin:12px 0 0;position:relative">Report a problem with your apartment heating</h2>
+                  <p style="position:relative;font-size:13.5px;color:#CDDDD1;margin:8px 0 0">Your radiator died overnight. Call the <i>gardien</i> and get it fixed — politely, in French.</p>
+                </div>
+                <div class="between" style="padding:14px 16px"><div class="flow" style="gap:7px;color:var(--green)"><svg class="ic"><use href="#i-listen"/></svg><svg class="ic"><use href="#i-speak"/></svg><svg class="ic"><use href="#i-review"/></svg><span class="sub" style="color:var(--ink-2);font-weight:600">Listen · Speak · Review</span></div><span class="btn primary sm">Start</span></div>
+              </div>
+            </div>
+
+            <div class="list">
+              <button class="row" data-nav="s-review"><span class="lead amber"><svg class="ic"><use href="#i-review"/></svg></span><span class="grow"><span class="rtitle">Warm-up review</span><span class="rsub">5 cards due · ~3 min</span></span><span class="tag amber">Due</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-library"><span class="lead sand"><svg class="ic"><use href="#i-listen"/></svg></span><span class="grow"><span class="rtitle">Daily listening</span><span class="rsub">« Au café » · 2 min · A2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-missions"><span class="lead"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Browse all missions</span><span class="rsub">Admin, health, social &amp; more</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+            <p class="cap" style="text-align:center;padding:2px 20px 6px">You've practised 4 days in a row. Keep it gentle — consistency beats cramming.</p>
+          </div>
+        </section>
+
+        <!-- 5 · MISSION OVERVIEW --><section class="screen" id="s-mission" data-tab="today" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-today"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Mission</span><span style="width:34px"></span></div>
+          <div class="pad stack">
+            <div class="hero-card">
+              <div class="thread"></div><div class="thread two"></div>
+              <div class="flow" style="gap:8px;position:relative"><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">Housing</span><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">B1</span></div>
+              <h1 class="serif" style="font-size:25px;font-weight:600;line-height:1.15;margin:12px 0 0;position:relative">Report a problem with your apartment heating</h1>
+              <p style="position:relative;font-size:14px;line-height:1.5;color:#CDDDD1;margin:10px 0 0">It's October, your radiator (<i>le chauffage</i>) stopped working last night, and it's cold. You need to call the building caretaker — <i>le gardien</i> — explain the problem, and ask him to send someone.</p>
+            </div>
+            <div class="card">
+              <div class="between" style="margin-bottom:8px"><b style="font-size:14px">In this mission</b><span class="cap"><svg class="ic" style="vertical-align:-.15em"><use href="#i-clock"/></svg> ~10 min</span></div>
+              <div class="steps">
+                <div class="step"><div class="dot now">1<div class="connector"></div></div><div class="grow"><div class="stitle">Listen to the call</div><div class="ssub">Hear the gardien's voicemail, with transcript</div></div></div>
+                <div class="step"><div class="dot">2<div class="connector"></div></div><div class="grow"><div class="stitle">Learn 4 key phrases</div><div class="ssub">Say who's calling, the problem, the ask</div></div></div>
+                <div class="step"><div class="dot">3<div class="connector"></div></div><div class="grow"><div class="stitle">Speak your version</div><div class="ssub">Record a 30–60s message to the gardien</div></div></div>
+                <div class="step"><div class="dot">4</div><div class="grow"><div class="stitle">Get coach feedback</div><div class="ssub">Corrections + a natural B1 version to keep</div></div></div>
+              </div>
+            </div>
+            <div class="card tonal"><div class="flow" style="align-items:flex-start;gap:10px"><svg class="ic" style="color:var(--gold);font-size:18px;margin-top:1px"><use href="#i-bulb"/></svg><p class="sub" style="margin:0"><b style="color:var(--ink)">Why this one:</b> heating and housing problems are the #1 admin headache for new arrivals — and a great excuse to practise polite, indirect requests.</p></div></div>
+          </div>
+          <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-listen-step">Start mission <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        </section>
+        <!-- 6 · LISTEN STEP --><section class="screen" id="s-listen-step" data-tab="today" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-mission"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 1 · Listen</span><span style="width:34px"></span></div>
+          <div class="pad stack">
+            <div><p class="eyebrow">Listen first</p><h1 class="largetitle">The gardien calls back</h1><p class="lede">He left a voicemail. Play it twice before reading — try to catch the gist.</p></div>
+            <div class="player">
+              <div class="flow" style="gap:14px">
+                <button class="playbtn" onclick="this.querySelector('use').setAttribute('href', this.dataset.on?'#i-play':'#i-pause'); this.dataset.on=this.dataset.on?'':'1';"><svg class="ic"><use href="#i-play"/></svg></button>
+                <div class="grow">
+                  <div class="wave" aria-hidden="true"><span style="height:30%"></span><span style="height:70%"></span><span style="height:45%"></span><span style="height:90%"></span><span style="height:60%"></span><span style="height:100%"></span><span style="height:40%"></span><span style="height:75%"></span><span style="height:55%"></span><span style="height:85%"></span><span style="height:35%"></span><span style="height:65%"></span><span style="height:50%"></span><span style="height:80%"></span><span style="height:42%"></span><span style="height:70%"></span></div>
+                </div>
+              </div>
+              <div class="scrub"><i style="width:34%"></i><b style="left:34%"></b></div>
+              <div class="times"><span>0:11</span><span>0:32</span></div>
+              <div class="between" style="margin-top:12px">
+                <button class="chip"><svg class="ic"><use href="#i-slow"/></svg>0.75× slower</button>
+                <button class="chip" onclick="toggleTranscript(this)" id="tr-toggle"><svg class="ic"><use href="#i-globe"/></svg>Show transcript</button>
+              </div>
+            </div>
+
+            <div id="transcript" hidden>
+              <div class="between" style="margin-bottom:2px"><p class="eyebrow" style="margin:0">Transcript</p>
+                <button class="nb-link" onclick="toggleEN(this)" id="en-toggle" style="font-size:13px">Show English</button></div>
+              <div class="card" style="padding:6px 15px">
+                <div class="tline"><span class="who">Le gardien</span>Bonjour Madame, c'est le gardien de l'immeuble. <span class="en" data-en hidden>Hello, this is the building caretaker.</span></div>
+                <div class="tline">J'ai bien eu votre message au sujet du chauffage. <span class="en" data-en hidden>I got your message about the heating.</span></div>
+                <div class="tline key">Je peux envoyer un technicien demain matin, entre 8h et 10h. <span class="en" data-en hidden>I can send a technician tomorrow morning, between 8 and 10.</span></div>
+                <div class="tline">Est-ce que ça vous convient ? Rappelez-moi pour confirmer. <span class="en" data-en hidden>Does that work for you? Call me back to confirm.</span></div>
+              </div>
+              <p class="cap" style="text-align:center;padding:8px 12px 0"><svg class="ic" style="color:var(--green)"><use href="#i-check"/></svg> Key line highlighted — you'll need « demain matin » to reply.</p>
+            </div>
+          </div>
+          <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-phrases">Learn the phrases <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        </section>
+        <!-- 7 · PHRASE COACH --><section class="screen" id="s-phrases" data-tab="today" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-listen-step"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 2 · Phrases</span><span style="width:34px"></span></div>
+          <div class="pad stack">
+            <div><p class="eyebrow">Your toolkit</p><h1 class="largetitle">Four phrases to build your call</h1><p class="lede">Tap to hear each one. You'll reuse the last three in dozens of situations.</p></div>
+
+            <div class="phrase">
+              <div class="between" style="gap:12px;align-items:flex-start"><div class="grow"><div class="flow" style="margin-bottom:6px"><span class="tag green">Opening</span></div><div class="fr">Je vous appelle au sujet de…</div><div class="en">I'm calling about…</div></div><button class="miniplay"><svg class="ic"><use href="#i-play"/></svg></button></div>
+              <div class="tip"><svg class="ic"><use href="#i-bulb"/></svg><span><b>« vous »</b>, not « tu » — you don't know the gardien. « au sujet de » = "regarding", more polished than « pour ».</span></div>
+            </div>
+
+            <div class="phrase">
+              <div class="between" style="gap:12px;align-items:flex-start"><div class="grow"><div class="flow" style="margin-bottom:6px"><span class="tag green">The problem</span></div><div class="fr">Le chauffage ne fonctionne plus depuis hier.</div><div class="en">The heating hasn't been working since yesterday.</div></div><button class="miniplay"><svg class="ic"><use href="#i-play"/></svg></button></div>
+              <div class="tip"><svg class="ic"><use href="#i-bulb"/></svg><span><b>ne… plus</b> = "no longer". <b>depuis</b> + a point in time (« hier ») = "since". Say it: <i>luh show-fahzh</i>.</span></div>
+            </div>
+
+            <div class="phrase">
+              <div class="between" style="gap:12px;align-items:flex-start"><div class="grow"><div class="flow" style="margin-bottom:6px"><span class="tag green">The ask</span></div><div class="fr">Est-ce que quelqu'un pourrait passer ?</div><div class="en">Could someone come by?</div></div><button class="miniplay"><svg class="ic"><use href="#i-play"/></svg></button></div>
+              <div class="tip"><svg class="ic"><use href="#i-bulb"/></svg><span><b>pourrait</b> (conditional) softens the request — far more polite than « peut ». <i>passer</i> = drop by / come round.</span></div>
+            </div>
+
+            <div class="phrase">
+              <div class="between" style="gap:12px;align-items:flex-start"><div class="grow"><div class="flow" style="margin-bottom:6px"><span class="tag gold">Extra polite</span></div><div class="fr">Je voulais savoir s'il serait possible de…</div><div class="en">I wanted to know if it would be possible to…</div></div><button class="miniplay"><svg class="ic"><use href="#i-play"/></svg></button></div>
+              <div class="tip"><svg class="ic"><use href="#i-bulb"/></svg><span>The B1 politeness formula. <b>voulais</b> + <b>serait</b> make any request sound gracious. Works everywhere — banks, doctors, landlords.</span></div>
+            </div>
+
+            <div class="card tonal between"><div class="flow" style="gap:10px"><svg class="ic" style="color:var(--green)"><use href="#i-review"/></svg><span class="sub"><b style="color:var(--ink)">Saved for later.</b> These 4 phrases go into your Review deck automatically.</span></div></div>
+          </div>
+          <div class="pad" style="margin-top:18px"><button class="btn primary" data-nav="s-record">I'm ready to speak <svg class="ic"><use href="#i-arrow"/></svg></button></div>
+        </section>
+        <!-- 8 · SPEAK RECORDING --><section class="screen" id="s-record" data-tab="today" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-phrases"><svg class="ic"><use href="#i-back"/></svg></button><span class="cap">Step 3 · Speak</span><button class="nb-link" data-nav="s-feedback">Skip</button></div>
+          <div class="pad stack">
+            <div><p class="eyebrow">Your turn</p><h1 class="largetitle">Leave the gardien a message</h1></div>
+            <div class="card tonal">
+              <p class="sub" style="margin:0 0 10px"><b style="color:var(--ink)">Your task.</b> Call and explain the heating problem, then ask for someone to come. Aim for 30–60 seconds. Use at least two key phrases:</p>
+              <div class="flow wrap" style="gap:7px"><span class="chip solid">Je vous appelle au sujet de…</span><span class="chip solid">ne fonctionne plus</span><span class="chip solid">quelqu'un pourrait passer</span></div>
+            </div>
+
+            <div class="recwrap">
+              <div class="rectime" id="rec-time">0:00</div>
+              <div class="livewave" id="livewave" hidden><span style="animation-delay:0s"></span><span style="animation-delay:.15s"></span><span style="animation-delay:.3s"></span><span style="animation-delay:.1s"></span><span style="animation-delay:.25s"></span><span style="animation-delay:.05s"></span><span style="animation-delay:.2s"></span><span style="animation-delay:.35s"></span><span style="animation-delay:.12s"></span></div>
+              <button class="recbtn" id="recbtn" onclick="toggleRec(this)"><svg class="ic"><use href="#i-mic"/></svg></button>
+              <p class="cap" id="rec-hint">Tap to start recording</p>
+            </div>
+
+            <details class="card"><summary style="font-size:14px;font-weight:600;cursor:pointer;color:var(--green)">Need a scaffold? Tap for a starter structure</summary>
+              <div class="stack-sm" style="margin-top:12px">
+                <p class="sub" style="margin:0">1. Greet + say who you are<br>2. « Je vous appelle au sujet de… »<br>3. Describe the problem<br>4. Make your request<br>5. Suggest a time / thank them</p>
+              </div>
+            </details>
+          </div>
+          <div class="pad" style="margin-top:16px"><button class="btn primary" id="rec-submit" data-nav="s-feedback" style="opacity:.5;pointer-events:none">Get feedback</button></div>
+        </section>
+        <!-- 9 · FEEDBACK --><section class="screen" id="s-feedback" data-tab="today" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-record"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Coach feedback</span><span style="width:34px"></span></div>
+          <div class="pad stack">
+            <div class="fb-summary">
+              <div class="thread"></div>
+              <div class="between" style="position:relative"><div><p class="eyebrow" style="color:#B9D3C4;margin:0">Understood clearly</p><div class="score">Nicely done.</div></div><span class="tag" style="background:rgba(233,224,199,.18);color:#E9E0C7">≈ B1</span></div>
+              <p style="position:relative;font-size:14.5px;line-height:1.55;color:#DCE8DF;margin:10px 0 0">A French gardien would understand every word, Anika. Your structure was clear and you stayed polite throughout. Two small tweaks will make you sound properly natural.</p>
+            </div>
+
+            <div class="fbsec good">
+              <h5><svg class="ic"><use href="#i-check"/></svg>What went well</h5>
+              <div class="fbli"><svg class="ic" style="color:var(--green)"><use href="#i-check"/></svg><span>You used « vous » consistently — exactly right for a caretaker you don't know.</span></div>
+              <div class="fbli"><svg class="ic" style="color:var(--green)"><use href="#i-check"/></svg><span>Clean order: greeting → problem → request. Easy to follow.</span></div>
+              <div class="fbli"><svg class="ic" style="color:var(--green)"><use href="#i-check"/></svg><span>« depuis hier soir » was spot on for saying how long it's been.</span></div>
+            </div>
+
+            <div class="fbsec corr">
+              <h5 style="color:var(--amber)"><svg class="ic"><use href="#i-edit"/></svg>3 things to tighten</h5>
+              <div class="corr-item"><div class="said">« Le chauffage marche pas depuis hier. »</div><div class="fix">Le chauffage ne <u>fonctionne</u> plus depuis hier.</div><div class="why">On a call, keep the full « ne… plus ». « fonctionne » sounds more precise than « marche » for an appliance.</div></div>
+              <div class="corr-item"><div class="said">« Vous pouvez envoyer quelqu'un ? »</div><div class="fix">Est-ce que quelqu'un <u>pourrait</u> passer ?</div><div class="why">The conditional « pourrait » softens the request. « pouvez » isn't wrong, just a little direct.</div></div>
+              <div class="corr-item"><div class="said">« Je veux un technicien aujourd'hui. »</div><div class="fix">Je voulais savoir s'il <u>serait possible</u> d'envoyer quelqu'un aujourd'hui.</div><div class="why">« Je veux » can feel demanding on the phone. This formula is your polite default.</div></div>
+            </div>
+
+            <div>
+              <p class="eyebrow" style="margin:0 0 8px">A natural B1 version to keep</p>
+              <div class="natural">
+                <p class="fr" style="margin:0">« Bonjour Monsieur, c'est Anika Mehta, appartement 4B. Je vous appelle au sujet du chauffage : il ne fonctionne plus depuis hier soir et il fait vraiment froid. Est-ce que quelqu'un pourrait passer ? Demain matin me conviendrait très bien. Merci beaucoup. »</p>
+                <button class="miniplay" style="margin-top:12px;width:auto;padding:0 14px;gap:8px;height:38px;font-size:13px;font-weight:600"><svg class="ic"><use href="#i-play"/></svg>Hear it</button>
+              </div>
+            </div>
+
+            <div class="card tonal"><div class="flow" style="gap:10px;align-items:flex-start"><svg class="ic" style="color:var(--gold);margin-top:1px"><use href="#i-listen"/></svg><p class="sub" style="margin:0"><b style="color:var(--ink)">Pronunciation:</b> « chauffage » is <i>sho-FAHZH</i> — the « au » is a clean /o/, and don't harden the final « -ge ».</p></div></div>
+          </div>
+          <div class="pad stack-sm" style="margin-top:18px">
+            <button class="btn primary" onclick="toast('Added 3 corrections to Review'); document.getElementById('fb-saved').hidden=false;"><svg class="ic"><use href="#i-review"/></svg>Save mistakes to review</button>
+            <p class="cap" id="fb-saved" hidden style="text-align:center;color:var(--green)"><svg class="ic"><use href="#i-check"/></svg> Saved — you'll see these in tomorrow's warm-up.</p>
+            <button class="btn tonal" data-nav="s-complete">Finish mission</button>
+          </div>
+        </section>
+        <!-- 10 · MISSION COMPLETE --><section class="screen" id="s-complete" data-tab="today" data-full="1">
+          <div class="pad" style="min-height:100%;display:flex;flex-direction:column;text-align:center">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;padding:24px 0">
+              <div style="width:88px;height:88px;border-radius:50%;background:var(--green);color:#F1ECDD;display:grid;place-items:center;box-shadow:0 16px 36px -12px rgba(47,93,78,.7)"><svg class="ic" style="font-size:42px;stroke-width:2"><use href="#i-check"/></svg></div>
+              <div><p class="eyebrow">Mission accomplie</p><h1 class="serif" style="font-size:30px;font-weight:600;margin:8px 0 0">You can report a heating problem — in French.</h1></div>
+              <p class="lede" style="text-align:center;max-width:32ch">That's a real errand handled. You built it from listening to speaking on your own.</p>
+
+              <div class="kpi" style="width:100%;margin-top:6px">
+                <div class="metric"><div class="mtop"><svg class="ic"><use href="#i-speak"/></svg></div><div class="mnum tnum" style="margin-top:8px">+4 min</div><div class="mlab">Speaking today</div></div>
+                <div class="metric gold"><div class="mtop"><svg class="ic"><use href="#i-review"/></svg></div><div class="mnum tnum" style="margin-top:8px">+4</div><div class="mlab">Phrases saved</div></div>
+              </div>
+              <div class="card between" style="width:100%">
+                <div class="flow" style="gap:11px"><div class="ring" style="--p:60;--sz:50px;--t:6px"><div class="rc"><b style="font-size:12.5px" class="serif tnum">60%</b></div></div>
+                  <div style="text-align:left"><div style="font-size:13.5px;font-weight:700">Paris readiness <span style="color:var(--green)">+2%</span></div><div class="cap">58% → 60% · nudging toward B1</div></div></div>
+                <span class="chip" style="background:#F1E7CE;color:#8a6a1f;border:0"><svg class="ic" style="color:var(--gold)"><use href="#i-flame"/></svg>5</span>
+              </div>
+            </div>
+            <div class="stack-sm" style="padding-bottom:12px">
+              <button class="btn primary" data-nav="s-progress">See my progress</button>
+              <button class="btn ghost" data-nav="s-today">Back to today</button>
+            </div>
+          </div>
+        </section>
+        <!-- 11 · REVIEW HOME --><section class="screen" id="s-review" data-tab="review">
+          <div class="pad" style="padding-top:8px"><h1 class="largetitle">Review</h1><p class="lede">Your saved mistakes and phrases, resurfaced right before you'd forget them.</p></div>
+          <div class="pad stack" style="margin-top:16px">
+            <div class="card pop between">
+              <div><div class="flow" style="gap:8px"><span class="serif tnum" style="font-size:30px;font-weight:600">12</span><span class="sub" style="font-weight:600">items due today</span></div><div class="cap" style="margin-top:2px">Mostly from the heating mission · ~4 min</div></div>
+              <button class="btn primary sm" data-nav="s-reviewcard">Start</button>
+            </div>
+
+            <div class="kpi">
+              <div class="metric"><div class="mtop"><svg class="ic"><use href="#i-check"/></svg><span class="cap" style="color:var(--muted)">7 days</span></div><div class="mnum tnum" style="margin-top:8px">74%</div><div class="mlab">Review accuracy</div></div>
+              <div class="metric gold"><div class="mtop"><svg class="ic"><use href="#i-book"/></svg></div><div class="mnum tnum" style="margin-top:8px">86</div><div class="mlab">Cards in your deck</div></div>
+            </div>
+
+            <div>
+              <p class="eyebrow" style="margin-bottom:9px">By type</p>
+              <div class="list">
+                <button class="row" data-nav="s-reviewcard"><span class="lead"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Vocabulary &amp; phrases</span><span class="rsub">42 cards · 78% known</span></span><span class="tag amber">6 due</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+                <button class="row" data-nav="s-reviewcard"><span class="lead amber"><svg class="ic"><use href="#i-edit"/></svg></span><span class="grow"><span class="rtitle">Grammar fixes</span><span class="rsub">Negation, conditional politeness</span></span><span class="tag amber">4 due</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+                <button class="row" data-nav="s-reviewcard"><span class="lead sand"><svg class="ic"><use href="#i-listen"/></svg></span><span class="grow"><span class="rtitle">Pronunciation</span><span class="rsub">« chauffage », « pourrait »</span></span><span class="tag amber">2 due</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              </div>
+            </div>
+
+            <div>
+              <p class="eyebrow" style="margin-bottom:9px">Recently saved</p>
+              <div class="list">
+                <div class="row" style="cursor:default"><span class="lead amber"><svg class="ic"><use href="#i-edit"/></svg></span><span class="grow"><span class="rtitle">ne… plus (not « marche pas »)</span><span class="rsub">From: Heating mission · today</span></span></div>
+                <div class="row" style="cursor:default"><span class="lead"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Je voulais savoir s'il serait possible de…</span><span class="rsub">From: Heating mission · today</span></span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 12 · REVIEW CARD --><section class="screen" id="s-reviewcard" data-tab="review" data-full="1">
+          <div class="navbar"><button class="iconbtn" data-nav="s-review"><svg class="ic"><use href="#i-back"/></svg></button><div class="grow" style="padding:0 6px"><div class="track" style="height:6px"><i style="width:33%"></i></div></div><span class="cap tnum">4 / 12</span></div>
+          <div class="pad" style="min-height:calc(100% - 44px);display:flex;flex-direction:column">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:10px 0">
+              <div class="flow" style="justify-content:center;gap:7px"><span class="tag amber">Grammar</span><span class="tag">from Heating mission</span></div>
+              <div class="card pop" style="padding:26px 20px;text-align:center;min-height:210px;display:flex;flex-direction:column;justify-content:center;gap:14px">
+                <p class="cap" style="letter-spacing:.1em;text-transform:uppercase">Say it in French</p>
+                <p style="font-size:19px;font-weight:600;line-height:1.4;color:var(--ink)">"The heating hasn't been working since yesterday."</p>
+                <div id="rc-answer" hidden>
+                  <div class="divider" style="margin:6px 0 14px"></div>
+                  <p class="serif" style="font-size:22px;font-weight:600;line-height:1.35;color:var(--green)">Le chauffage ne fonctionne plus depuis hier.</p>
+                  <p class="cap" style="margin-top:8px">Watch the « ne… plus » — not « marche pas ».</p>
+                </div>
+              </div>
+            </div>
+            <div style="padding-bottom:14px">
+              <button class="btn primary" id="rc-reveal" onclick="document.getElementById('rc-answer').hidden=false;this.hidden=true;document.getElementById('rc-rate').hidden=false;">Show answer</button>
+              <div id="rc-rate" hidden>
+                <p class="cap" style="text-align:center;margin:0 0 10px">How did that feel?</p>
+                <div class="btnrow">
+                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--berry)">Again</b><small class="cap">&lt;1m</small></button>
+                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--amber)">Hard</b><small class="cap">2 days</small></button>
+                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--green)">Good</b><small class="cap">5 days</small></button>
+                  <button class="btn neutral sm" style="flex-direction:column;gap:2px;flex:1;padding:11px 6px" data-nav="s-review"><b style="color:var(--green)">Easy</b><small class="cap">12 days</small></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 13 · SPEAK ROLEPLAY LIST --><section class="screen" id="s-roleplays" data-tab="speak">
+          <div class="pad" style="padding-top:8px"><h1 class="largetitle">Speak</h1><p class="lede">Live roleplays with your coach. It plays the other person — you just talk.</p></div>
+          <div class="pad stack" style="margin-top:16px">
+            <div class="card pop tap" data-nav="s-chat" style="padding:0;overflow:hidden">
+              <div class="hero-card" style="border-radius:0;padding:17px 17px 15px">
+                <div class="flow between" style="position:relative"><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">Continue</span><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">B1</span></div>
+                <h2 class="serif" style="font-size:19px;font-weight:600;margin:10px 0 0;position:relative">Call the gardien about the heating</h2>
+                <p style="position:relative;font-size:13px;color:#CDDDD1;margin:6px 0 0">You left the voicemail — now he calls back to arrange the visit.</p>
+              </div>
+              <div class="between" style="padding:12px 15px"><span class="cap"><svg class="ic"><use href="#i-speak"/></svg> 6 turns · ~5 min</span><span class="btn primary sm">Resume</span></div>
+            </div>
+
+            <p class="eyebrow" style="margin:2px 0 -2px">More situations</p>
+            <div class="list">
+              <button class="row" data-nav="s-chat"><span class="lead"><svg class="ic"><use href="#i-bank"/></svg></span><span class="grow"><span class="rtitle">Open a bank account</span><span class="rsub">Admin · B1 · ~6 min</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-chat"><span class="lead amber"><svg class="ic"><use href="#i-heart"/></svg></span><span class="grow"><span class="rtitle">At the pharmacy</span><span class="rsub">Health · A2 · ~4 min</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-chat"><span class="lead sand"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Return something to a shop</span><span class="rsub">Daily life · B1 · ~5 min</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-chat"><span class="lead"><svg class="ic"><use href="#i-cal"/></svg></span><span class="grow"><span class="rtitle">Make a doctor's appointment</span><span class="rsub">Health · B1 · ~5 min</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+
+            <button class="card tap between" data-nav="s-chat" style="border-style:dashed"><div class="flow" style="gap:11px"><span class="row" style="padding:0"><span class="lead" style="background:var(--paper-2);color:var(--ink-2)"><svg class="ic"><use href="#i-speak"/></svg></span></span><div style="text-align:left"><div style="font-size:15px;font-weight:600">Free conversation</div><div class="cap">Just chat — the coach adapts to your level</div></div></div><svg class="ic chev"><use href="#i-chev"/></svg></button>
+          </div>
+        </section>
+        <!-- 14 · ROLEPLAY CHAT --><section class="screen" id="s-chat" data-tab="speak" data-full="1" style="padding:0">
+          <div class="chatwrap">
+            <div class="navbar" style="padding:6px 14px;border-bottom:1px solid var(--line-2)">
+              <button class="iconbtn" data-nav="s-roleplays"><svg class="ic"><use href="#i-back"/></svg></button>
+              <div class="flow" style="gap:9px;margin:0 auto"><div style="width:30px;height:30px;border-radius:50%;background:var(--green-weak);color:var(--green);display:grid;place-items:center;font-size:14px"><svg class="ic"><use href="#i-users"/></svg></div><div><div style="font-size:14px;font-weight:600;line-height:1.1">Le gardien</div><div class="cap">Heating · roleplay</div></div></div>
+              <button class="iconbtn plain" onclick="toast('Translations on')"><svg class="ic"><use href="#i-globe"/></svg></button>
+            </div>
+            <div class="chatscroll" id="chatscroll">
+              <div class="scenechip">Il vous rappelle au sujet de votre message</div>
+              <div class="bubble them">Allô oui, bonjour, c'est le gardien. Vous avez un souci avec le chauffage ?<span class="en">Hello yes, it's the caretaker. You have a problem with the heating?</span></div>
+              <div class="bubble me">Bonjour, oui. Le chauffage ne fonctionne plus depuis hier soir.<span class="en">Hello, yes. The heating hasn't worked since last night.</span></div>
+              <div class="bubble them">D'accord, je vois. Il fait froid alors ?<span class="en">Alright, I see. So it's cold?</span></div>
+              <div class="bubble me">Oui, très froid. Est-ce que quelqu'un pourrait passer aujourd'hui ?<span class="en">Yes, very cold. Could someone come by today?</span></div>
+              <div class="bubble correct"><b>Tiny fix:</b> great sentence. Even smoother: « …<b>pourrait passer</b> dans la journée ? » — sounds more natural for "sometime today".</div>
+              <div class="bubble them">Je peux envoyer quelqu'un en fin d'après-midi, vers 17h. Ça vous va ?<span class="en">I can send someone late afternoon, around 5pm. Does that work?</span></div>
+              <div class="scenechip">Your turn — accept the time and thank him</div>
+            </div>
+            <div class="flow" style="padding:2px 14px 0;gap:7px"><button class="chip" onclick="toast('Hint shown')"><svg class="ic"><use href="#i-bulb"/></svg>Hint</button><button class="chip">« Parfait, merci… »</button></div>
+            <div class="composer">
+              <div class="field">Type or hold to speak…</div>
+              <button class="mic"><svg class="ic"><use href="#i-mic"/></svg></button>
+            </div>
+          </div>
+        </section>
+        <!-- 15 · LISTEN LIBRARY --><section class="screen" id="s-library" data-tab="listen">
+          <div class="pad" style="padding-top:8px"><h1 class="largetitle">Listen</h1><p class="lede">Short, real Paris audio — spoken at natural speed, with transcripts when you want them.</p></div>
+          <div class="pad" style="margin-top:14px"><div class="flow wrap" style="gap:7px"><span class="chip on">All</span><span class="chip">A2</span><span class="chip">B1</span><span class="chip">B2</span><span class="chip">Housing</span><span class="chip">Admin</span></div></div>
+          <div class="pad stack" style="margin-top:16px">
+            <div class="card pop tap" data-nav="s-listen-step" style="padding:0;overflow:hidden">
+              <div style="padding:15px 16px;background:var(--card-2)">
+                <div class="between"><span class="tag green">Continue</span><span class="cap">0:11 / 0:32</span></div>
+                <div class="flow" style="gap:13px;margin-top:11px"><button class="playbtn" style="width:44px;height:44px;font-size:17px"><svg class="ic"><use href="#i-play"/></svg></button><div class="grow"><div style="font-size:15.5px;font-weight:600">Le gardien rappelle</div><div class="cap">Housing · B1 · from your mission</div><div class="track" style="height:5px;margin-top:8px"><i style="width:34%"></i></div></div></div>
+              </div>
+            </div>
+
+            <p class="eyebrow" style="margin:2px 0 -2px">Everyday Paris</p>
+            <div class="list">
+              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Au café — commander</span><span class="rsub">2:04 · A2</span></span><span class="tag green">Played</span></button>
+              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">À la pharmacie</span><span class="rsub">2:41 · A2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Louer un appartement</span><span class="rsub">3:18 · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Annonces du métro</span><span class="rsub">1:12 · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-listen-step"><span class="lead sand"><svg class="ic"><use href="#i-play"/></svg></span><span class="grow"><span class="rtitle">Petite conversation — les voisins</span><span class="rsub">2:55 · B2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+          </div>
+        </section>
+        <!-- 16 · PROGRESS --><section class="screen" id="s-progress" data-tab="progress">
+          <div class="pad" style="padding-top:8px"><h1 class="largetitle">Progress</h1></div>
+          <div class="pad stack" style="margin-top:14px">
+            <div class="card pop" style="display:flex;align-items:center;gap:18px">
+              <div class="ring" style="--p:58;--sz:118px"><div class="rc"><b>58%</b><small>Paris ready</small></div></div>
+              <div class="grow stack-sm">
+                <div class="flow" style="gap:8px"><svg class="ic" style="color:var(--green)"><use href="#i-clock"/></svg><div><div style="font-size:15px;font-weight:700">12 days to Paris</div><div class="cap">Target: 70% by move-in</div></div></div>
+                <div class="track"><i style="width:58%"></i></div>
+                <p class="cap" style="margin:0"><span style="color:var(--green);font-weight:700">+6%</span> in the last 7 days · on pace</p>
+              </div>
+            </div>
+
+            <div class="kpi">
+              <div class="metric"><div class="mtop"><svg class="ic"><use href="#i-flame" style="color:var(--gold)"/></svg></div><div class="mnum tnum" style="margin-top:8px">4</div><div class="mlab">Day streak</div></div>
+              <div class="metric"><div class="mtop"><svg class="ic"><use href="#i-check"/></svg></div><div class="mnum tnum" style="margin-top:8px">4/5</div><div class="mlab">Missions this week</div></div>
+              <div class="metric"><div class="mtop"><svg class="ic"><use href="#i-speak"/></svg></div><div class="mnum tnum" style="margin-top:8px">32<span style="font-size:14px"> min</span></div><div class="mlab">Speaking this week</div></div>
+              <div class="metric"><div class="mtop"><svg class="ic"><use href="#i-review"/></svg></div><div class="mnum tnum" style="margin-top:8px">74%</div><div class="mlab">Review accuracy</div></div>
+            </div>
+
+            <div class="card">
+              <div class="between" style="margin-bottom:4px"><b style="font-size:14px">Speaking time</b><span class="cap">This week · 32 min</span></div>
+              <div class="bars">
+                <div class="b"><i style="height:30%"></i><small>M</small></div>
+                <div class="b on"><i style="height:55%"></i><small>T</small></div>
+                <div class="b on"><i style="height:40%"></i><small>W</small></div>
+                <div class="b on"><i style="height:78%"></i><small>T</small></div>
+                <div class="b on"><i style="height:62%"></i><small>F</small></div>
+                <div class="b"><i style="height:15%"></i><small>S</small></div>
+                <div class="b"><i style="height:8%"></i><small>S</small></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <b style="font-size:14px">Skills</b>
+              <div style="margin-top:12px;display:flex;flex-direction:column;gap:13px">
+                <div class="skill"><span class="sname">Listening</span><div class="track"><i style="width:70%"></i></div><span class="sval">70%</span></div>
+                <div class="skill"><span class="sname">Speaking</span><div class="track amber"><i style="width:55%"></i></div><span class="sval">55%</span></div>
+                <div class="skill"><span class="sname">Vocabulary</span><div class="track"><i style="width:64%"></i></div><span class="sval">64%</span></div>
+                <div class="skill"><span class="sname">Confidence</span><div class="track"><i style="width:58%"></i></div><span class="sval">58%</span></div>
+              </div>
+              <p class="cap" style="margin:12px 0 0"><svg class="ic" style="color:var(--amber)"><use href="#i-bulb"/></svg> Speaking is your growth edge — the daily missions target it directly.</p>
+            </div>
+
+            <div>
+              <p class="eyebrow" style="margin-bottom:9px">Milestones</p>
+              <div class="list">
+                <div class="row" style="cursor:default"><span class="lead"><svg class="ic"><use href="#i-check"/></svg></span><span class="grow"><span class="rtitle">Handled a phone call in French</span><span class="rsub">Unlocked today</span></span></div>
+                <div class="row" style="cursor:default"><span class="lead sand"><svg class="ic"><use href="#i-lock"/></svg></span><span class="grow"><span class="rtitle" style="color:var(--muted)">40 minutes speaking this week</span><span class="rsub">8 min to go</span></span></div>
+                <div class="row" style="cursor:default"><span class="lead sand"><svg class="ic"><use href="#i-lock"/></svg></span><span class="grow"><span class="rtitle" style="color:var(--muted)">Reach 70% Paris readiness</span><span class="rsub">Your move-in target</span></span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- 17 · MISSION LIBRARY --><section class="screen" id="s-missions" data-tab="today">
+          <div class="navbar"><button class="iconbtn" data-nav="s-today"><svg class="ic"><use href="#i-back"/></svg></button><span class="nb-title">Missions</span><button class="iconbtn"><svg class="ic"><use href="#i-search"/></svg></button></div>
+          <div class="pad"><div class="flow wrap" style="gap:7px"><span class="chip on">All</span><span class="chip">Housing</span><span class="chip">Admin</span><span class="chip">Health</span><span class="chip">Daily life</span><span class="chip">Social</span></div></div>
+          <div class="pad stack" style="margin-top:16px">
+            <div class="card pop tap" data-nav="s-mission" style="padding:0;overflow:hidden">
+              <div class="hero-card" style="border-radius:0;padding:16px 16px 14px">
+                <div class="between" style="position:relative"><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">Today's mission</span><span class="tag" style="background:rgba(233,224,199,.16);color:#DCE8DF">B1</span></div>
+                <h2 class="serif" style="font-size:18px;font-weight:600;margin:9px 0 0;position:relative">Report a heating problem</h2>
+                <p style="position:relative;font-size:12.5px;color:#CDDDD1;margin:5px 0 0">Housing · call the gardien · in progress</p>
+              </div>
+            </div>
+
+            <p class="eyebrow" style="margin:2px 0 -4px">Housing &amp; admin</p>
+            <div class="list">
+              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-bank"/></svg></span><span class="grow"><span class="rtitle">Set up your bank account</span><span class="rsub">Admin · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Sign a lease &amp; état des lieux</span><span class="rsub">Housing · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" style="cursor:default;opacity:.62"><span class="lead sand"><svg class="ic"><use href="#i-lock"/></svg></span><span class="grow"><span class="rtitle">Register with the préfecture</span><span class="rsub">Admin · B2</span></span><span class="tag">Locked</span></button>
+            </div>
+
+            <p class="eyebrow" style="margin:2px 0 -4px">Health &amp; daily life</p>
+            <div class="list">
+              <button class="row" data-nav="s-mission"><span class="lead amber"><svg class="ic"><use href="#i-heart"/></svg></span><span class="grow"><span class="rtitle">Buy medicine at the pharmacy</span><span class="rsub">Health · A2</span></span><span class="tag green">Done</span></button>
+              <button class="row" data-nav="s-mission"><span class="lead amber"><svg class="ic"><use href="#i-cal"/></svg></span><span class="grow"><span class="rtitle">Book a doctor's appointment</span><span class="rsub">Health · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-mission"><span class="lead sand"><svg class="ic"><use href="#i-book"/></svg></span><span class="grow"><span class="rtitle">Return an item to a shop</span><span class="rsub">Daily life · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+
+            <p class="eyebrow" style="margin:2px 0 -4px">Social</p>
+            <div class="list">
+              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-users"/></svg></span><span class="grow"><span class="rtitle">Small talk with a neighbour</span><span class="rsub">Social · B1</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-nav="s-mission"><span class="lead"><svg class="ic"><use href="#i-heart"/></svg></span><span class="grow"><span class="rtitle">Invite someone for a coffee</span><span class="rsub">Social · A2</span></span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+      <nav class="tabbar" id="tabbar">
+        <button class="tab is-active" data-tab="today" data-nav="s-today"><svg class="ic"><use href="#i-today"/></svg><span>Today</span></button>
+        <button class="tab" data-tab="speak" data-nav="s-roleplays"><svg class="ic"><use href="#i-speak"/></svg><span>Speak</span></button>
+        <button class="tab" data-tab="listen" data-nav="s-library"><svg class="ic"><use href="#i-listen"/></svg><span>Listen</span></button>
+        <button class="tab" data-tab="review" data-nav="s-review"><svg class="ic"><use href="#i-review"/></svg><span>Review</span></button>
+        <button class="tab" data-tab="progress" data-nav="s-progress"><svg class="ic"><use href="#i-progress"/></svg><span>Progress</span></button>
+      </nav>
+      <div class="homeind"><i></i></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DESKTOP ============ -->
+<div class="stage" id="stage-desktop">
+  <div class="mac">
+    <div class="mac__bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">coach.parisfrenchcoach.app / learners / anika</div></div>
+    <div class="dash">
+      <aside class="side">
+        <div class="lear"><div class="av">A</div><div><b>Anika Mehta</b><span>A2+ · B1 goal</span></div></div>
+        <a class="on" data-view="v-overview"><svg class="ic"><use href="#i-users"/></svg>Learner overview</a>
+        <a data-view="v-weekly"><svg class="ic"><use href="#i-progress"/></svg>Weekly progress</a>
+        <a data-view="v-planner"><svg class="ic"><use href="#i-cal"/></svg>Mission planner</a>
+        <a data-view="v-attempt"><svg class="ic"><use href="#i-speak"/></svg>Attempt review</a>
+        <a data-view="v-mistakes"><svg class="ic"><use href="#i-review"/></svg>Mistake bank</a>
+        <a data-view="v-editor"><svg class="ic"><use href="#i-edit"/></svg>Content editor</a>
+        <div class="side-foot">Coaching view · read-only demo<br>Last sync 2 min ago</div>
+      </aside>
+      <main class="main">
+        <section class="view on" id="v-overview">
+          <div class="dhead"><div><h1>Anika Mehta</h1><p>A2+ · Goal: B1 practical confidence · Moving to Paris in <b>12 days</b> (19 Jul)</p></div>
+            <div class="flow" style="gap:10px"><button class="ghostbtn"><svg class="ic"><use href="#i-edit"/></svg>Message</button><button class="ghostbtn" onclick="showView('v-planner')"><svg class="ic"><use href="#i-cal"/></svg>Plan week</button></div></div>
+
+          <div class="dgrid" style="grid-template-columns:1.4fr 1fr">
+            <div class="dgrid">
+              <div class="kpi4">
+                <div class="panel" style="padding:15px"><div class="pill g" style="margin-bottom:10px">On track</div><div class="serif tnum" style="font-size:30px;font-weight:600">58%</div><div class="phint" style="margin:2px 0 0">Paris readiness</div></div>
+                <div class="panel" style="padding:15px"><div class="mtop" style="color:var(--gold);margin-bottom:10px"><svg class="ic"><use href="#i-flame"/></svg></div><div class="serif tnum" style="font-size:30px;font-weight:600">4</div><div class="phint" style="margin:2px 0 0">Day streak</div></div>
+                <div class="panel" style="padding:15px"><div class="phint" style="margin:0 0 10px">Missions</div><div class="serif tnum" style="font-size:30px;font-weight:600">4/5</div><div class="phint" style="margin:2px 0 0">This week</div></div>
+                <div class="panel" style="padding:15px"><div class="phint" style="margin:0 0 10px">Speaking</div><div class="serif tnum" style="font-size:30px;font-weight:600">32<span style="font-size:15px">m</span></div><div class="phint" style="margin:2px 0 0">This week</div></div>
+              </div>
+
+              <div class="panel">
+                <div class="between"><h3>Recent activity</h3><span class="pill n">Last 7 days</span></div>
+                <table class="tbl" style="margin-top:12px"><tbody>
+                  <tr><td style="width:42%"><b>Heating problem</b><div class="phint" style="margin:0">Speaking mission</div></td><td><span class="pill g">Completed</span></td><td class="tnum">Today</td><td style="text-align:right"><a class="pill b" style="cursor:pointer" onclick="showView('v-attempt')">Review attempt →</a></td></tr>
+                  <tr><td><b>« Au café »</b><div class="phint" style="margin:0">Listening</div></td><td><span class="pill n">Listened</span></td><td class="tnum">Today</td><td></td></tr>
+                  <tr><td><b>Review session</b><div class="phint" style="margin:0">12 cards</div></td><td><span class="pill g">74% correct</span></td><td class="tnum">Yesterday</td><td></td></tr>
+                  <tr><td><b>Pharmacy roleplay</b><div class="phint" style="margin:0">Speaking</div></td><td><span class="pill g">Completed</span></td><td class="tnum">2 days ago</td><td></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+
+            <div class="dgrid">
+              <div class="panel" style="background:radial-gradient(120% 120% at 90% 0%,#376a58,#244a3e);color:#EDE7D7;border:0">
+                <h3 style="color:#fff">Coach note</h3>
+                <p style="font-size:13.5px;line-height:1.55;color:#DCE8DF;margin:8px 0 0">Anika is consistent and motivated but avoids speaking when unsure. The heating mission was her first phone-call task — she completed it unaided. Keep pushing polite requests (conditional forms).</p>
+              </div>
+              <div class="panel">
+                <h3>Needs attention</h3>
+                <div style="margin-top:12px;display:flex;flex-direction:column;gap:11px">
+                  <div class="flow" style="gap:10px;align-items:flex-start"><span class="pill a"><svg class="ic"><use href="#i-warn"/></svg></span><div><b style="font-size:13.5px">Speaking &lt; goal pace</b><div class="phint" style="margin:2px 0 0">55% vs 62% target for week 2</div></div></div>
+                  <div class="flow" style="gap:10px;align-items:flex-start"><span class="pill a"><svg class="ic"><use href="#i-edit"/></svg></span><div><b style="font-size:13.5px">Recurring: dropped « ne »</b><div class="phint" style="margin:2px 0 0">Seen in 4 attempts — <a style="cursor:pointer;color:var(--sky)" onclick="showView('v-mistakes')">mistake bank</a></div></div></div>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Skills</h3>
+                <div style="margin-top:12px">
+                  <div class="radar-bar"><b>Listening</b><div class="track"><i style="width:70%"></i></div><span>70%</span></div>
+                  <div class="radar-bar"><b>Speaking</b><div class="track amber"><i style="width:55%"></i></div><span>55%</span></div>
+                  <div class="radar-bar"><b>Vocabulary</b><div class="track"><i style="width:64%"></i></div><span>64%</span></div>
+                  <div class="radar-bar"><b>Confidence</b><div class="track"><i style="width:58%"></i></div><span>58%</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="view" id="v-weekly">
+          <div class="dhead"><div><h1>Weekly progress</h1><p>Week of 6–12 July · 12 days to move-in</p></div><div class="flow" style="gap:8px"><span class="pill n">◀ Prev</span><span class="pill g">This week</span></div></div>
+          <div class="dgrid" style="grid-template-columns:2fr 1fr">
+            <div class="panel">
+              <div class="between"><div><h3>Paris readiness trend</h3><p class="phint">Percent to B1 practical · rising steadily</p></div><div class="serif tnum" style="font-size:26px;font-weight:600;color:var(--green)">58% <span style="font-size:13px;color:var(--muted)">▲ +6</span></div></div>
+              <svg viewBox="0 0 520 180" style="width:100%;height:auto;margin-top:8px" preserveAspectRatio="none">
+                <defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F5D4E" stop-opacity="0.22"/><stop offset="1" stop-color="#2F5D4E" stop-opacity="0"/></linearGradient></defs>
+                <line x1="0" y1="45" x2="520" y2="45" stroke="#e6ddca" stroke-width="1"/><line x1="0" y1="90" x2="520" y2="90" stroke="#e6ddca" stroke-width="1"/><line x1="0" y1="135" x2="520" y2="135" stroke="#e6ddca" stroke-width="1"/>
+                <path d="M0,150 L86,140 L173,132 L260,120 L346,104 L433,86 L520,74 L520,180 L0,180 Z" fill="url(#grad)"/>
+                <path d="M0,150 L86,140 L173,132 L260,120 L346,104 L433,86 L520,74" fill="none" stroke="#2F5D4E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="520" cy="74" r="4.5" fill="#2F5D4E"/>
+              </svg>
+              <div class="flow between" style="margin-top:2px"><span class="phint">Mon</span><span class="phint">Wed</span><span class="phint">Fri</span><span class="phint">Sun</span></div>
+            </div>
+            <div class="panel">
+              <h3>This week</h3>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:16px">
+                <div><div class="between"><span class="phint" style="margin:0">Missions completed</span><b class="tnum">4 / 5</b></div><div class="track" style="margin-top:6px"><i style="width:80%"></i></div></div>
+                <div><div class="between"><span class="phint" style="margin:0">Speaking time</span><b class="tnum">32 / 40 min</b></div><div class="track" style="margin-top:6px"><i style="width:80%"></i></div></div>
+                <div><div class="between"><span class="phint" style="margin:0">Review accuracy</span><b class="tnum">74%</b></div><div class="track amber" style="margin-top:6px"><i style="width:74%"></i></div></div>
+                <div><div class="between"><span class="phint" style="margin:0">Days practised</span><b class="tnum">5 / 7</b></div><div class="track gold" style="margin-top:6px"><i style="width:71%"></i></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="dgrid" style="grid-template-columns:1fr 1fr;margin-top:16px">
+            <div class="panel"><h3>Speaking minutes / day</h3><p class="phint">Peaks on mission days</p>
+              <div class="bars" style="height:130px">
+                <div class="b"><i style="height:26%"></i><small>M</small></div><div class="b on"><i style="height:55%"></i><small>T</small></div><div class="b on"><i style="height:40%"></i><small>W</small></div><div class="b on"><i style="height:82%"></i><small>T</small></div><div class="b on"><i style="height:64%"></i><small>F</small></div><div class="b"><i style="height:16%"></i><small>S</small></div><div class="b"><i style="height:9%"></i><small>S</small></div>
+              </div>
+            </div>
+            <div class="panel"><h3>Skill movement</h3><p class="phint">Change vs last week</p>
+              <div style="margin-top:6px">
+                <div class="radar-bar"><b>Listening</b><div class="track"><i style="width:70%"></i></div><span style="color:var(--green)">+3</span></div>
+                <div class="radar-bar"><b>Speaking</b><div class="track amber"><i style="width:55%"></i></div><span style="color:var(--green)">+5</span></div>
+                <div class="radar-bar"><b>Vocabulary</b><div class="track"><i style="width:64%"></i></div><span style="color:var(--green)">+2</span></div>
+                <div class="radar-bar"><b>Confidence</b><div class="track"><i style="width:58%"></i></div><span style="color:var(--green)">+4</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="view" id="v-planner">
+          <div class="dhead"><div><h1>Mission planner</h1><p>Build Anika's runway to move-in · 5 missions scheduled this week</p></div>
+            <div class="flow" style="gap:10px"><button class="ghostbtn"><svg class="ic"><use href="#i-cal"/></svg>This week</button><button class="ghostbtn" onclick="toast('Plan published to Anika')"><svg class="ic"><use href="#i-check"/></svg>Publish plan</button></div></div>
+          <div class="panel">
+            <div class="between" style="margin-bottom:14px"><h3>6 – 12 July</h3><span class="pill g">4 / 5 done</span></div>
+            <div class="week">
+              <div class="day"><span class="dname">Mon 6</span><div class="assign">Café — ordering<small style="display:block;font-weight:500;opacity:.8">A2 · done</small></div></div>
+              <div class="day"><span class="dname">Tue 7</span><div class="assign amber">Heating problem<small style="display:block;font-weight:500;opacity:.8">B1 · today</small></div></div>
+              <div class="day"><span class="dname">Wed 8</span><div class="assign">Pharmacy<small style="display:block;font-weight:500;opacity:.8">A2</small></div></div>
+              <div class="day"><span class="dname">Thu 9</span><div class="assign">Bank account<small style="display:block;font-weight:500;opacity:.8">B1</small></div></div>
+              <div class="day"><span class="dname">Fri 10</span><div class="assign">Doctor booking<small style="display:block;font-weight:500;opacity:.8">B1</small></div></div>
+              <div class="day"><span class="dname">Sat 11</span><div class="assign empty">Rest day</div></div>
+              <div class="day"><span class="dname">Sun 12</span><div class="assign empty">+ Add mission</div></div>
+            </div>
+          </div>
+          <div class="dgrid" style="grid-template-columns:1fr 1.3fr;margin-top:16px">
+            <div class="panel"><h3>Suggested next</h3><p class="phint">Based on Anika's gaps &amp; move-in date</p>
+              <div style="display:flex;flex-direction:column;gap:9px;margin-top:6px">
+                <div class="flow between" style="padding:11px;background:var(--paper);border:1px solid var(--line);border-radius:11px"><div><b style="font-size:13.5px">Sign a lease · état des lieux</b><div class="phint" style="margin:0">Housing · B1 · high relevance</div></div><button class="pill g" style="border:0;cursor:pointer" onclick="toast('Added to Sunday')">+ Add</button></div>
+                <div class="flow between" style="padding:11px;background:var(--paper);border:1px solid var(--line);border-radius:11px"><div><b style="font-size:13.5px">Neighbour small talk</b><div class="phint" style="margin:0">Social · B1 · confidence</div></div><button class="pill g" style="border:0;cursor:pointer" onclick="toast('Added to plan')">+ Add</button></div>
+                <div class="flow between" style="padding:11px;background:var(--paper);border:1px solid var(--line);border-radius:11px"><div><b style="font-size:13.5px">Préfecture appointment</b><div class="phint" style="margin:0">Admin · B2 · stretch</div></div><button class="pill n" style="border:0;cursor:pointer">Locked</button></div>
+              </div>
+            </div>
+            <div class="panel"><h3>Focus this week</h3><p class="phint">What these missions build toward</p>
+              <div style="margin-top:8px;display:flex;flex-direction:column;gap:12px">
+                <div class="flow" style="gap:11px;align-items:flex-start"><span class="pill g"><svg class="ic"><use href="#i-speak"/></svg></span><div><b style="font-size:13.5px">Polite requests under pressure</b><p class="phint" style="margin:2px 0 0">Conditional forms on the phone and at counters — Anika's weakest area.</p></div></div>
+                <div class="flow" style="gap:11px;align-items:flex-start"><span class="pill g"><svg class="ic"><use href="#i-bank"/></svg></span><div><b style="font-size:13.5px">Admin survival vocabulary</b><p class="phint" style="margin:2px 0 0">Housing + banking words she'll need in week one.</p></div></div>
+                <div class="flow" style="gap:11px;align-items:flex-start"><span class="pill a"><svg class="ic"><use href="#i-clock"/></svg></span><div><b style="font-size:13.5px">Keep it to ~10 min/day</b><p class="phint" style="margin:2px 0 0">Sustainable pace beats a pre-move cram.</p></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="view" id="v-attempt">
+          <div class="dhead"><div><p class="phint" style="margin:0 0 4px"><a style="cursor:pointer;color:var(--sky)" onclick="showView('v-overview')">← Anika</a> · Heating problem</p><h1>Speaking attempt</h1><p>Recorded today · 0:47 · used 3 / 4 target phrases</p></div>
+            <div class="flow" style="gap:10px"><span class="pill g">≈ B1</span><button class="ghostbtn" onclick="showView('v-mistakes')"><svg class="ic"><use href="#i-review"/></svg>Send to mistake bank</button></div></div>
+          <div class="dgrid" style="grid-template-columns:1.5fr 1fr">
+            <div class="dgrid">
+              <div class="panel">
+                <div class="flow" style="gap:14px"><button class="playbtn"><svg class="ic"><use href="#i-play"/></svg></button>
+                  <div class="wave grow" style="height:44px"><span style="height:40%"></span><span style="height:75%"></span><span style="height:55%"></span><span class="on" style="height:95%"></span><span style="height:60%"></span><span style="height:85%"></span><span style="height:45%"></span><span style="height:70%"></span><span style="height:50%"></span><span style="height:90%"></span><span style="height:38%"></span><span style="height:66%"></span><span style="height:52%"></span><span style="height:80%"></span><span style="height:44%"></span><span style="height:72%"></span><span style="height:58%"></span><span style="height:48%"></span></div>
+                  <span class="phint tnum" style="margin:0">0:22 / 0:47</span></div>
+              </div>
+              <div class="panel">
+                <div class="between"><h3>Transcript &amp; annotations</h3><span class="pill n">Auto-transcribed</span></div>
+                <div style="margin-top:12px;display:flex;flex-direction:column;gap:12px">
+                  <p style="font-size:15px;line-height:1.7;margin:0">
+                    « Bonjour, euh, je vous appelle au sujet du chauffage.
+                    <mark style="background:var(--amber-weak);border-radius:4px;padding:1px 3px">Le chauffage marche pas</mark> depuis hier.
+                    <mark style="background:var(--amber-weak);border-radius:4px;padding:1px 3px">Vous pouvez envoyer</mark> quelqu'un ? Euh…
+                    <mark style="background:var(--amber-weak);border-radius:4px;padding:1px 3px">Je veux</mark> un technicien aujourd'hui. Merci. »
+                  </p>
+                  <div style="display:flex;flex-direction:column;gap:9px">
+                    <div class="flow" style="gap:10px;align-items:flex-start;padding:11px;background:var(--paper);border-radius:11px;border:1px solid var(--line)"><span class="pill a">1</span><div><b style="font-size:13.5px">« marche pas » → « ne fonctionne plus »</b><p class="phint" style="margin:2px 0 0">Dropped « ne » + colloquial verb. Grammar · recurring.</p></div></div>
+                    <div class="flow" style="gap:10px;align-items:flex-start;padding:11px;background:var(--paper);border-radius:11px;border:1px solid var(--line)"><span class="pill a">2</span><div><b style="font-size:13.5px">« Vous pouvez » → « quelqu'un pourrait »</b><p class="phint" style="margin:2px 0 0">Use conditional to soften. Register.</p></div></div>
+                    <div class="flow" style="gap:10px;align-items:flex-start;padding:11px;background:var(--paper);border-radius:11px;border:1px solid var(--line)"><span class="pill a">3</span><div><b style="font-size:13.5px">« Je veux » → « je voulais savoir si… »</b><p class="phint" style="margin:2px 0 0">Sounds demanding on a call. Register.</p></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dgrid">
+              <div class="panel"><h3>Auto-scores</h3>
+                <div style="margin-top:12px">
+                  <div class="radar-bar"><b>Task done</b><div class="track"><i style="width:90%"></i></div><span>9/10</span></div>
+                  <div class="radar-bar"><b>Fluency</b><div class="track"><i style="width:65%"></i></div><span>6.5</span></div>
+                  <div class="radar-bar"><b>Grammar</b><div class="track amber"><i style="width:60%"></i></div><span>6/10</span></div>
+                  <div class="radar-bar"><b>Politeness</b><div class="track amber"><i style="width:55%"></i></div><span>5.5</span></div>
+                  <div class="radar-bar"><b>Pronunciation</b><div class="track"><i style="width:72%"></i></div><span>7/10</span></div>
+                </div>
+              </div>
+              <div class="panel"><h3>Coach feedback to Anika</h3>
+                <textarea class="input" rows="4" style="margin-top:10px">Really clear message, Anika — the gardien would act on this. Focus next on keeping « ne » and softening asks with « pourrait ». You're closer to B1 than you think.</textarea>
+                <div class="flow" style="gap:9px;margin-top:11px"><button class="ghostbtn" onclick="toast('Feedback sent to Anika')" style="background:var(--green);color:#F1ECDD;border:0"><svg class="ic"><use href="#i-check"/></svg>Send</button><button class="ghostbtn">Save draft</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="view" id="v-mistakes">
+          <div class="dhead"><div><h1>Mistake bank</h1><p>Anika's recurring errors, ranked by frequency · feeds her review deck</p></div>
+            <div class="flow" style="gap:8px"><span class="pill n">All types</span><span class="pill a">Grammar</span><span class="pill b">Register</span><span class="pill g">Vocab</span></div></div>
+          <div class="panel">
+            <table class="tbl">
+              <thead><tr><th style="width:34%">Mistake → fix</th><th>Type</th><th>Seen</th><th>Last</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><b>« marche pas » → « ne fonctionne plus »</b><div class="phint" style="margin:0">Dropped negation « ne »</div></td><td><span class="pill a">Grammar</span></td><td class="tnum">4×</td><td class="tnum">Today</td><td><span class="pill a">Active</span></td><td style="text-align:right"><a class="phint" style="cursor:pointer;color:var(--sky)">In review →</a></td></tr>
+                <tr><td><b>« Vous pouvez ? » → « pourrait ? »</b><div class="phint" style="margin:0">Conditional for polite asks</div></td><td><span class="pill b">Register</span></td><td class="tnum">3×</td><td class="tnum">Today</td><td><span class="pill a">Active</span></td><td style="text-align:right"><a class="phint" style="cursor:pointer;color:var(--sky)">In review →</a></td></tr>
+                <tr><td><b>« Je veux » → « je voulais savoir si… »</b><div class="phint" style="margin:0">Softening requests</div></td><td><span class="pill b">Register</span></td><td class="tnum">3×</td><td class="tnum">Today</td><td><span class="pill a">Active</span></td><td style="text-align:right"><a class="phint" style="cursor:pointer;color:var(--sky)">In review →</a></td></tr>
+                <tr><td><b>« le chauffage » gender</b><div class="phint" style="margin:0">Said « la chauffage »</div></td><td><span class="pill g">Vocab</span></td><td class="tnum">2×</td><td class="tnum">Today</td><td><span class="pill g">Improving</span></td><td style="text-align:right"><a class="phint" style="cursor:pointer;color:var(--sky)">In review →</a></td></tr>
+                <tr><td><b>« depuis » vs « pendant »</b><div class="phint" style="margin:0">Duration prepositions</div></td><td><span class="pill a">Grammar</span></td><td class="tnum">2×</td><td class="tnum">3 days ago</td><td><span class="pill g">Improving</span></td><td style="text-align:right"><a class="phint" style="cursor:pointer;color:var(--sky)">In review →</a></td></tr>
+                <tr><td><b>« -age » ending pronunciation</b><div class="phint" style="margin:0">« chauffage », « garage »</div></td><td><span class="pill n">Pronun.</span></td><td class="tnum">2×</td><td class="tnum">Today</td><td><span class="pill a">Active</span></td><td style="text-align:right"><a class="phint" style="cursor:pointer;color:var(--sky)">In review →</a></td></tr>
+                <tr><td style="opacity:.6"><b>« bonjour » vs « bonsoir » timing</b><div class="phint" style="margin:0">Time-of-day greeting</div></td><td><span class="pill g">Vocab</span></td><td class="tnum">1×</td><td class="tnum">5 days ago</td><td><span class="pill g">Resolved</span></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow" style="gap:12px;margin-top:16px"><button class="ghostbtn" onclick="toast('3 mistakes added to next review')" style="background:var(--green);color:#F1ECDD;border:0"><svg class="ic"><use href="#i-plus"/></svg>Push active items to review deck</button><span class="phint" style="margin:0">6 active · 1 resolved this week</span></div>
+        </section>
+        <section class="view" id="v-editor">
+          <div class="dhead"><div><p class="phint" style="margin:0 0 4px">Mission editor</p><h1>Report a heating problem</h1><p>Housing · used in Anika's plan (Tue 7 Jul)</p></div>
+            <div class="flow" style="gap:10px"><span class="pill g">Published</span><button class="ghostbtn">Preview</button><button class="ghostbtn" onclick="toast('Mission saved')" style="background:var(--green);color:#F1ECDD;border:0"><svg class="ic"><use href="#i-check"/></svg>Save changes</button></div></div>
+          <div class="dgrid" style="grid-template-columns:1.5fr 1fr">
+            <div class="dgrid">
+              <div class="panel"><h3>Basics</h3>
+                <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-top:12px">
+                  <div><label class="field-lbl">Title</label><input class="input" value="Report a problem with your apartment heating"></div>
+                  <div><label class="field-lbl">Theme</label><input class="input" value="Housing"></div>
+                  <div><label class="field-lbl">Level</label><input class="input" value="B1"></div>
+                </div>
+                <div style="margin-top:12px"><label class="field-lbl">Scenario (learner-facing)</label><textarea class="input" rows="3">It's October, your radiator stopped working last night, and it's cold. Call the gardien, explain the problem, and ask him to send someone.</textarea></div>
+              </div>
+              <div class="panel"><h3>Audio script — the gardien's callback</h3><p class="phint">Voiced by the coach TTS · shown on the Listen step</p>
+                <textarea class="input" rows="4" style="line-height:1.6">Bonjour Madame, c'est le gardien de l'immeuble. J'ai bien eu votre message au sujet du chauffage. Je peux envoyer un technicien demain matin, entre 8h et 10h. Est-ce que ça vous convient ? Rappelez-moi pour confirmer.</textarea>
+              </div>
+              <div class="panel"><div class="between"><h3>Key phrases</h3><button class="pill g" style="border:0;cursor:pointer" onclick="toast('Phrase row added')"><svg class="ic"><use href="#i-plus"/></svg> Add phrase</button></div>
+                <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px">
+                  <div style="display:grid;grid-template-columns:1.3fr 1fr auto;gap:9px;align-items:center"><input class="input" value="Je vous appelle au sujet de…"><input class="input" value="I'm calling about…"><span class="pill n">Opening</span></div>
+                  <div style="display:grid;grid-template-columns:1.3fr 1fr auto;gap:9px;align-items:center"><input class="input" value="Le chauffage ne fonctionne plus depuis hier."><input class="input" value="The heating hasn't worked since yesterday."><span class="pill n">Problem</span></div>
+                  <div style="display:grid;grid-template-columns:1.3fr 1fr auto;gap:9px;align-items:center"><input class="input" value="Est-ce que quelqu'un pourrait passer ?"><input class="input" value="Could someone come by?"><span class="pill n">Request</span></div>
+                  <div style="display:grid;grid-template-columns:1.3fr 1fr auto;gap:9px;align-items:center"><input class="input" value="Je voulais savoir s'il serait possible de…"><input class="input" value="I wanted to know if it would be possible to…"><span class="pill n">Polite</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="dgrid">
+              <div class="panel"><h3>Target vocabulary</h3><div class="flow wrap" style="gap:8px;margin-top:12px"><span class="pill n">le chauffage</span><span class="pill n">le gardien</span><span class="pill n">un technicien</span><span class="pill n">une panne</span><span class="pill n">fonctionner</span><span class="pill n">passer</span><span class="pill n">depuis</span><span class="pill n" style="cursor:pointer" onclick="toast('Add vocab')"><svg class="ic"><use href="#i-plus"/></svg></span></div></div>
+              <div class="panel"><h3>Grammar focus</h3><div style="margin-top:10px;display:flex;flex-direction:column;gap:9px">
+                <label class="flow" style="gap:9px"><input type="checkbox" checked> <span style="font-size:13.5px">Negation « ne… plus »</span></label>
+                <label class="flow" style="gap:9px"><input type="checkbox" checked> <span style="font-size:13.5px">Conditional politeness « pourrait / serait »</span></label>
+                <label class="flow" style="gap:9px"><input type="checkbox" checked> <span style="font-size:13.5px">« depuis » + time</span></label>
+                <label class="flow" style="gap:9px"><input type="checkbox"> <span style="font-size:13.5px">Formal « vous » register</span></label>
+              </div></div>
+              <div class="panel"><h3>Speaking task</h3><textarea class="input" rows="3">Call and explain the heating problem, then ask for someone to come. 30–60s. Use at least 2 key phrases.</textarea>
+                <div style="margin-top:12px"><label class="field-lbl">Est. time</label><input class="input" value="~10 min"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- screen index -->
+<div class="index" id="index">
+  <div class="index__scrim" onclick="toggleIndex(false)"></div>
+  <div class="index__panel">
+    <div class="between" style="margin-bottom:6px"><b style="font-size:17px">All screens</b><button class="iconbtn" onclick="toggleIndex(false)">✕</button></div>
+    <h4>Onboarding</h4><div class="idx" id="idx-onb"></div>
+    <h4>Learner app</h4><div class="idx" id="idx-app"></div>
+    <h4>Coach dashboard (desktop)</h4><div class="idx" id="idx-coach"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span id="toast-msg">Saved to review</span></div>
+
+<script>
+  const phone=document.getElementById('phone');
+  function showMobile(id){
+    const el=document.getElementById(id); if(!el) return;
+    document.querySelectorAll('#viewport .screen').forEach(s=>s.classList.remove('is-active'));
+    el.classList.add('is-active');
+    const vp=document.getElementById('viewport'); vp.scrollTop=0; el.scrollTop=0;
+    phone.setAttribute('data-chrome', el.dataset.full? 'full':'app');
+    const tab=el.dataset.tab||'';
+    document.querySelectorAll('.tab').forEach(t=>{const on=t.dataset.tab===tab;t.classList.toggle('is-active',on);
+      if(on)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
+  }
+  function showStage(which){
+    document.getElementById('stage-mobile').classList.toggle('on',which==='mobile');
+    document.getElementById('stage-desktop').classList.toggle('on',which==='desktop');
+    const a=document.getElementById('tg-app'),c=document.getElementById('tg-coach');
+    a.classList.toggle('on',which==='mobile');c.classList.toggle('on',which==='desktop');
+    a.setAttribute('aria-selected',which==='mobile');c.setAttribute('aria-selected',which==='desktop');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function showView(id){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+    document.getElementById(id).classList.add('on');
+    document.querySelectorAll('.side a').forEach(a=>a.classList.toggle('on',a.dataset.view===id));
+    document.querySelector('.main').scrollTop=0;
+  }
+  document.addEventListener('click',e=>{
+    const nav=e.target.closest('[data-nav]'); if(nav){showMobile(nav.dataset.nav);}
+    const v=e.target.closest('[data-view]'); if(v){showView(v.dataset.view);}
+  });
+  function pick(el){el.parentNode.querySelectorAll('.card').forEach(c=>{c.style.borderColor='';c.style.background='';c.querySelector('svg')?.remove();});
+    el.style.borderColor='var(--green)';el.style.background='var(--green-weak)';
+    if(!el.querySelector('.ic')){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','ic');s.style.color='var(--green)';s.style.fontSize='22px';s.innerHTML='<use href="#i-check"/>';el.appendChild(s);}}
+  let tmr;
+  function toast(msg){const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg||'Saved to review';t.classList.add('show');clearTimeout(tmr);tmr=setTimeout(()=>t.classList.remove('show'),2200);}
+  function toggleIndex(open){document.getElementById('index').classList.toggle('open',open);}
+  function toggleTranscript(btn){const t=document.getElementById('transcript');const show=t.hidden;t.hidden=!show;
+    btn.innerHTML=(show?'<svg class="ic"><use href="#i-globe"/></svg>Hide transcript':'<svg class="ic"><use href="#i-globe"/></svg>Show transcript');btn.classList.toggle('on',show);}
+  function toggleEN(btn){const ens=document.querySelectorAll('#transcript [data-en]');const show=ens[0]?.hidden;
+    ens.forEach(e=>e.hidden=!show);btn.textContent=show?'Hide English':'Show English';}
+  let recInt,recSec=0;
+  function toggleRec(btn){
+    const t=document.getElementById('rec-time'),hint=document.getElementById('rec-hint'),lw=document.getElementById('livewave'),sub=document.getElementById('rec-submit');
+    if(btn.classList.contains('rec')){
+      btn.classList.remove('rec');btn.setAttribute('aria-pressed','false');btn.querySelector('use').setAttribute('href','#i-mic');clearInterval(recInt);
+      lw.hidden=true;hint.textContent='Recorded '+t.textContent+' · tap to re-record';
+      sub.style.opacity='1';sub.style.pointerEvents='auto';
+    }else{
+      btn.classList.add('rec');btn.setAttribute('aria-pressed','true');btn.querySelector('use').setAttribute('href','#i-pause');recSec=0;t.textContent='0:00';
+      lw.hidden=false;hint.textContent='Listening… tap to stop';
+      recInt=setInterval(()=>{recSec++;t.textContent='0:'+String(recSec).padStart(2,'0');if(recSec>=59){toggleRec(btn);}},1000);
+    }
+  }
+  // build index
+  const idxData={onb:[['s-welcome','1','Welcome'],['s-goal','2','Goal setup'],['s-placement','3','Placement snapshot']],
+    app:[['s-today','4','Today home'],['s-mission','5','Mission overview'],['s-listen-step','6','Listen step'],['s-phrases','7','Phrase coach'],['s-record','8','Speak recording'],['s-feedback','9','Speaking feedback'],['s-complete','10','Mission complete'],['s-review','11','Review home'],['s-reviewcard','12','Review card'],['s-roleplays','13','Roleplay list'],['s-chat','14','Roleplay chat'],['s-library','15','Listen library'],['s-progress','16','Progress dashboard'],['s-missions','17','Mission library']],
+    coach:[['v-overview','1','Learner overview'],['v-weekly','2','Weekly progress'],['v-planner','3','Mission planner'],['v-attempt','4','Attempt review'],['v-mistakes','5','Mistake bank'],['v-editor','6','Content editor']]};
+  function idxBtn(id,n,label,coach){const b=document.createElement('button');b.innerHTML='<i>'+n+'</i>'+label;
+    b.onclick=()=>{toggleIndex(false);if(coach){showStage('desktop');showView(id);}else{showStage('mobile');showMobile(id);}};return b;}
+  idxData.onb.forEach(d=>document.getElementById('idx-onb').appendChild(idxBtn(...d)));
+  idxData.app.forEach(d=>document.getElementById('idx-app').appendChild(idxBtn(...d)));
+  idxData.coach.forEach(d=>document.getElementById('idx-coach').appendChild(idxBtn(...d,true)));
+
+  // --- accessibility pass: name icon-only buttons, hide decorative icons, make custom controls keyboard-operable ---
+  (function(){
+    const L={'i-back':'Back','i-chev':'Open','i-play':'Play','i-pause':'Pause','i-mic':'Record','i-globe':'Toggle translation','i-search':'Search screens','i-plus':'Add','i-slow':'Play slower','i-check':'Confirm'};
+    document.querySelectorAll('svg.ic').forEach(s=>s.setAttribute('aria-hidden','true'));
+    document.querySelectorAll('button').forEach(b=>{
+      if(b.getAttribute('aria-label')||b.textContent.trim()) return;
+      const u=b.querySelector('use'),id=u&&u.getAttribute('href').slice(2);
+      if(id&&L[id]) b.setAttribute('aria-label',L[id]);
+    });
+    document.getElementById('recbtn')?.setAttribute('aria-pressed','false');
+    document.getElementById('tg-app').setAttribute('role','tab');
+    document.getElementById('tg-coach').setAttribute('role','tab');
+    document.querySelectorAll('[data-nav],[data-view]').forEach(el=>{
+      if(el.tagName.toLowerCase()==='button') return;
+      if(!el.hasAttribute('tabindex')) el.tabIndex=0;
+      if(!el.hasAttribute('role')) el.setAttribute('role', el.hasAttribute('data-view')?'link':'button');
+    });
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){
+        const t=e.target.closest('[data-nav],[data-view]');
+        if(t&&t.tagName.toLowerCase()!=='button'){e.preventDefault();t.click();}
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
